@@ -57,10 +57,10 @@ export function AdminSidebar() {
       <SidebarHeader className="flex-row items-center justify-between border-b border-border/50 pb-3">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<NavLink to={`${BASE}`} />}>
-              <div className="flex aspect-square h-8 w-8 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground">
-                P
-              </div>
+            <SidebarMenuButton
+              size="lg"
+              render={<NavLink to={`${BASE}/dashboard`} />}
+            >
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">Admin Panel</span>
                 <span className="truncate text-xs text-muted-foreground">
@@ -235,7 +235,7 @@ export function AdminSidebar() {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={admin?.avatar}
+                    src={admin?.avatar ?? undefined}
                     alt={admin?.fullName || "Admin"}
                   />
                   <AvatarFallback className="rounded-lg">

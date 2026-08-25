@@ -1,13 +1,5 @@
 import { api } from "@/lib/axios"
-
-export interface Admin {
-  id: string
-  email: string
-  fullName: string
-  avatar: string | null
-  createdAt: string
-  updatedAt: string
-}
+import { type Admin, type LogoutResponse } from "@/types/api"
 
 const authApi = {
   async login(email: string, password: string): Promise<Admin> {
@@ -19,9 +11,11 @@ const authApi = {
     return response.data
   },
 
-  async logout(): Promise<void> {
-    await api.post("/auth/logout")
+  async logout(): Promise<LogoutResponse> {
+    const response = await api.post<LogoutResponse>("/auth/logout")
+    return response.data
   },
 }
 
+export type { Admin }
 export default authApi
