@@ -21,6 +21,7 @@ import { isAxiosError } from "axios"
 import { useState } from "react"
 import { useAdminStore } from "@/store/adminStore"
 import { useNavigate } from "react-router-dom"
+import { toast } from "@/components/ui/toast"
 
 function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
@@ -35,17 +36,35 @@ function AdminLogin() {
     mode: "onChange", // Validates on change to dynamically control the submit button
     defaultValues: { email: "", password: "" },
   })
-
+  const formatedUpdateDate = (date: string) => {
+    return new Date(date).toLocaleString("en-US", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
   const onSubmit = async (data: AdminLoginInput) => {
     // Log the form values
     console.log("Form Submitted:", data)
     try {
       const res = await authApi.login(data.email, data.password)
-      console.log("Login successful:", res)
+      toast.add({
+        type: "info",
+        title: "Login Successful",
+        description: `You have been logged in successfully on ${formatedUpdateDate(res.updatedAt)}.`,
+      })
       setAdmin(res)
       navigate("/007/admin/dashboard") // Redirect to the admin home page after successful login
     } catch (error) {
       if (isAxiosError(error)) {
+        toast.add({
+          type: "error",
+          title: "Login Failed",
+          description:
+            error.response?.data?.message || "An error occurred during login.",
+        })
         console.error("Login failed:", error.response?.data)
       }
       console.error("Login failed:", error)
