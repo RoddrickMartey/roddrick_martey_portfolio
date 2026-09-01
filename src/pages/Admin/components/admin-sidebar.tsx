@@ -12,6 +12,7 @@ import {
   LogOut,
   ChevronRight,
   ChevronsUpDown,
+  PanelLeft,
 } from "lucide-react"
 
 import {
@@ -27,7 +28,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import {
   Collapsible,
@@ -53,23 +53,18 @@ export function AdminSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      {/* Header: Brand / Platform Info + Trigger */}
-      <SidebarHeader className="flex-row items-center justify-between border-b border-border/50 pb-3">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              render={<NavLink to={`${BASE}/dashboard`} />}
-            >
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Admin Panel</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  Portfolio CMS
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="border-b border-border/50 p-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+            <PanelLeft className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">Admin Panel</p>
+            <p className="truncate text-[11px] text-muted-foreground">
+              Portfolio CMS
+            </p>
+          </div>
+        </div>
       </SidebarHeader>
 
       {/* Main Navigation Items */}
@@ -214,9 +209,6 @@ export function AdminSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarTrigger />
         </SidebarGroup>
       </SidebarContent>
 

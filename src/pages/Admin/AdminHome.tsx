@@ -1,6 +1,7 @@
 import { useDashboard } from "@/hooks/useDashboard"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -15,11 +16,15 @@ import {
   Cpu,
   Mail,
   AlertTriangle,
+  ArrowRight,
+  Sparkles,
+  CircleAlert,
 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 function AdminHome() {
   const { data, isLoading, isError, error } = useDashboard()
+  const navigate = useNavigate()
 
   if (isLoading) {
     return <DashboardSkeleton />
@@ -48,27 +53,106 @@ function AdminHome() {
   }
 
   const { counts, recentMessages, recentProjects, profileStatus } = data
-  console.log(data)
+
+  const metricCards = [
+    {
+      label: "Projects",
+      value: counts.projects,
+      sublabel: `${counts.publishedProjects} published`,
+      icon: <FolderGit2 className="h-4 w-4 text-sky-500" />,
+      accent: "from-sky-500/10 via-sky-500/5 to-transparent",
+    },
+    {
+      label: "Featured",
+      value: counts.featuredProjects,
+      icon: <Star className="h-4 w-4 text-orange-500" />,
+      accent: "from-orange-500/10 via-orange-500/5 to-transparent",
+    },
+    {
+      label: "Skills",
+      value: counts.skills,
+      sublabel: `${counts.skillCategories} categories`,
+      icon: <Wrench className="h-4 w-4 text-violet-500" />,
+      accent: "from-violet-500/10 via-violet-500/5 to-transparent",
+    },
+    {
+      label: "Tech",
+      value: counts.tech,
+      icon: <Cpu className="h-4 w-4 text-cyan-500" />,
+      accent: "from-cyan-500/10 via-cyan-500/5 to-transparent",
+    },
+    {
+      label: "Experience",
+      value: counts.experiences,
+      icon: <Briefcase className="h-4 w-4 text-emerald-500" />,
+      accent: "from-emerald-500/10 via-emerald-500/5 to-transparent",
+    },
+    {
+      label: "Certifications",
+      value: counts.certifications,
+      icon: <Award className="h-4 w-4 text-yellow-500" />,
+      accent: "from-yellow-500/10 via-yellow-500/5 to-transparent",
+    },
+    {
+      label: "Education",
+      value: counts.education,
+      icon: <GraduationCap className="h-4 w-4 text-pink-500" />,
+      accent: "from-pink-500/10 via-pink-500/5 to-transparent",
+    },
+    {
+      label: "Messages",
+      value: counts.totalMessages,
+      sublabel:
+        counts.unreadMessages > 0
+          ? `${counts.unreadMessages} unread`
+          : "All read",
+      icon: <Mail className="h-4 w-4 text-rose-500" />,
+      accent: "from-rose-500/10 via-rose-500/5 to-transparent",
+      highlight: counts.unreadMessages > 0,
+    },
+  ]
 
   return (
     <section className="min-h-screen w-full space-y-6 p-3">
-      <div className="w-full">
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Overview of your portfolio content
-        </p>
+      <div className="overflow-hidden rounded-2xl border border-border/80 bg-linear-to-br from-primary/10 via-background to-background shadow-sm">
+        <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between md:p-6">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              Portfolio overview
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
+              Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Keep your portfolio fresh, visible, and conversion-ready.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/007/admin/profile")}
+            >
+              Edit profile
+            </Button>
+            <Button onClick={() => navigate("/007/admin/projects/create")}>
+              New project
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Profile completeness alert */}
       {profileStatus.exists && !profileStatus.isComplete && (
-        <Alert className="w-full">
-          <AlertTriangle className="h-4 w-4" />
+        <Alert className="w-full border-amber-500/30 bg-amber-500/5">
+          <CircleAlert className="h-4 w-4 text-amber-600" />
           <AlertTitle>Your profile is incomplete</AlertTitle>
           <AlertDescription>
             Missing: {profileStatus.missingFields.join(", ")}.{" "}
             <Link
               to="/007/admin/profile"
-              className="underline underline-offset-2"
+              className="font-medium underline underline-offset-2"
             >
               Complete it now
             </Link>
@@ -84,7 +168,7 @@ function AdminHome() {
             Your profile hasn't been set up yet.{" "}
             <Link
               to="/007/admin/profile"
-              className="underline underline-offset-2"
+              className="font-medium underline underline-offset-2"
             >
               Set it up
             </Link>
@@ -92,65 +176,34 @@ function AdminHome() {
         </Alert>
       )}
 
-      {/* Metric cards */}
-      <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        <MetricCard
-          icon={<FolderGit2 className="h-4 w-4" />}
-          label="Projects"
-          value={counts.projects}
-          sublabel={`${counts.publishedProjects} published`}
-        />
-        <MetricCard
-          icon={<Star className="h-4 w-4" />}
-          label="Featured"
-          value={counts.featuredProjects}
-        />
-        <MetricCard
-          icon={<Wrench className="h-4 w-4" />}
-          label="Skills"
-          value={counts.skills}
-          sublabel={`${counts.skillCategories} categories`}
-        />
-        <MetricCard
-          icon={<Cpu className="h-4 w-4" />}
-          label="Tech"
-          value={counts.tech}
-        />
-        <MetricCard
-          icon={<Briefcase className="h-4 w-4" />}
-          label="Experience"
-          value={counts.experiences}
-        />
-        <MetricCard
-          icon={<Award className="h-4 w-4" />}
-          label="Certifications"
-          value={counts.certifications}
-        />
-        <MetricCard
-          icon={<GraduationCap className="h-4 w-4" />}
-          label="Education"
-          value={counts.education}
-        />
-        <MetricCard
-          icon={<Mail className="h-4 w-4" />}
-          label="Messages"
-          value={counts.totalMessages}
-          sublabel={
-            counts.unreadMessages > 0
-              ? `${counts.unreadMessages} unread`
-              : "All read"
-          }
-          highlight={counts.unreadMessages > 0}
-        />
+      <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+        {metricCards.map((card) => (
+          <MetricCard
+            key={card.label}
+            icon={card.icon}
+            label={card.label}
+            value={card.value}
+            sublabel={card.sublabel}
+            highlight={card.highlight}
+            accent={card.accent}
+          />
+        ))}
       </div>
 
       <div className="grid w-full gap-4 md:grid-cols-2">
-        {/* Recent projects */}
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-base">
-              Recently updated projects
-            </CardTitle>
+        <Card className="w-full border-border/80 bg-card/80 shadow-sm backdrop-blur-sm">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between gap-3">
+              <CardTitle className="text-base">
+                Recently updated projects
+              </CardTitle>
+              <Badge
+                variant="secondary"
+                className="rounded-full px-2 py-0.5 text-[10px] tracking-wide uppercase"
+              >
+                Live
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent className="w-full space-y-3">
             {recentProjects.length === 0 ? (
@@ -159,13 +212,18 @@ function AdminHome() {
               recentProjects.map((project, i) => (
                 <div key={project.id} className="w-full">
                   <Link
-                    to={`/007/projects/${project.id}`}
-                    className="flex w-full items-center justify-between text-sm hover:underline"
+                    to={`/projects/${project.slug}`}
+                    className="flex w-full items-center justify-between gap-3 rounded-md px-2 py-2 transition-colors hover:bg-muted/50"
                   >
-                    <span className="truncate">{project.title}</span>
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">{project.title}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {project.published ? "Published" : "Draft"}
+                      </p>
+                    </div>
                     <div className="flex shrink-0 items-center gap-2">
                       {!project.published && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-[10px]">
                           Draft
                         </Badge>
                       )}
@@ -185,10 +243,16 @@ function AdminHome() {
           </CardContent>
         </Card>
 
-        {/* Recent messages */}
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-base">Recent messages</CardTitle>
+        <Card className="w-full border-border/80 bg-card/80 shadow-sm backdrop-blur-sm">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between gap-3">
+              <CardTitle className="text-base">Recent messages</CardTitle>
+              {counts.unreadMessages > 0 && (
+                <Badge className="rounded-full bg-rose-500/10 text-rose-600 hover:bg-rose-500/15">
+                  {counts.unreadMessages} unread
+                </Badge>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="w-full space-y-3">
             {recentMessages.length === 0 ? (
@@ -197,13 +261,15 @@ function AdminHome() {
               recentMessages.map((msg, i) => (
                 <div key={msg.id} className="w-full">
                   <Link
-                    to="/007/messages"
-                    className="block w-full text-sm hover:underline"
+                    to="/007/admin/messages"
+                    className="block w-full rounded-md px-2 py-2 transition-colors hover:bg-muted/50"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-3">
                       <span className="truncate font-medium">{msg.name}</span>
                       <div className="flex shrink-0 items-center gap-2">
-                        {!msg.read && <Badge className="text-xs">New</Badge>}
+                        {!msg.read && (
+                          <Badge className="text-[10px]">New</Badge>
+                        )}
                         <span className="text-xs text-muted-foreground">
                           {formatDistanceToNow(new Date(msg.createdAt), {
                             addSuffix: true,
@@ -211,7 +277,7 @@ function AdminHome() {
                         </span>
                       </div>
                     </div>
-                    <p className="truncate text-xs text-muted-foreground">
+                    <p className="mt-1 truncate text-xs text-muted-foreground">
                       {msg.subject || msg.message}
                     </p>
                   </Link>
@@ -234,23 +300,37 @@ function MetricCard({
   value,
   sublabel,
   highlight,
+  accent,
 }: {
   icon: React.ReactNode
   label: string
   value: number
   sublabel?: string
   highlight?: boolean
+  accent?: string
 }) {
   return (
-    <Card className={highlight ? "border-primary/50" : undefined}>
-      <CardContent className="p-4">
+    <Card
+      className={[
+        "group relative overflow-hidden border-border/80 bg-card/90 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
+        highlight ? "border-primary/40" : "",
+      ].join(" ")}
+    >
+      <div
+        className={`absolute inset-0 bg-linear-to-br ${accent ?? "from-primary/5 via-transparent to-transparent"}`}
+      />
+      <CardContent className="relative p-4">
         <div className="flex items-center justify-between text-muted-foreground">
-          <span className="text-xs font-medium">{label}</span>
-          {icon}
+          <span className="text-xs font-medium tracking-wide uppercase">
+            {label}
+          </span>
+          <div className="rounded-md bg-background/80 p-2 shadow-sm">
+            {icon}
+          </div>
         </div>
-        <p className="mt-2 text-2xl font-semibold">{value}</p>
+        <p className="mt-4 text-2xl font-semibold tracking-tight">{value}</p>
         {sublabel && (
-          <p className="text-xs text-muted-foreground">{sublabel}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{sublabel}</p>
         )}
       </CardContent>
     </Card>

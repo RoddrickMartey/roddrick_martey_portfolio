@@ -1,4 +1,4 @@
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AdminSidebar } from "../components/admin-sidebar"
 import { Outlet } from "react-router-dom"
 
@@ -6,7 +6,10 @@ function AdminLayout() {
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <main className="min-h-screen w-full bg-background">
+      <div className="fixed top-3 left-3 z-50 md:hidden">
+        <SidebarTrigger className="border border-border bg-background/90 shadow-sm backdrop-blur-sm" />
+      </div>
+      <main className="min-h-screen w-full bg-background pt-14 md:pt-0">
         <Outlet />
       </main>
     </SidebarProvider>

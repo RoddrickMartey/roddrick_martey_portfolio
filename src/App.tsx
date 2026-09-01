@@ -9,6 +9,12 @@ import AdminProject from "./pages/Admin/AdminProject"
 import AdminProjectCreate from "./pages/Admin/AdminProjectCreate"
 import ProjectView from "./pages/Portfolio/ProjectView"
 import AdminProjectEdit from "./pages/Admin/AdminProjectEdit"
+import AdminExperience from "./pages/Admin/AdminExperience"
+import AdminCertification from "./pages/Admin/AdminCertification"
+import AdminEducation from "./pages/Admin/AdminEducation"
+import AdminSkills from "./pages/Admin/AdminSkills"
+import AdminTechnology from "./pages/Admin/AdminTechnology"
+import AdminMessages from "./pages/Admin/AdminMessages"
 import MainPage from "./pages/Portfolio/MainPage"
 import MainLayout from "./pages/Portfolio/layout/MainLayout"
 
@@ -33,6 +39,19 @@ export function App() {
             path="/007/admin/projects/edit/:slug"
             element={<AdminProjectEdit />}
           />
+          <Route path="/007/admin/experiences" element={<AdminExperience />} />
+          <Route
+            path="/007/admin/certifications"
+            element={<AdminCertification />}
+          />
+          <Route path="/007/admin/education" element={<AdminEducation />} />
+          <Route path="/007/admin/skills" element={<AdminSkills />} />
+          <Route
+            path="/007/admin/skills/categories"
+            element={<AdminSkills />}
+          />
+          <Route path="/007/admin/tech" element={<AdminTechnology />} />
+          <Route path="/007/admin/messages" element={<AdminMessages />} />
         </Route>
       </Route>
 
