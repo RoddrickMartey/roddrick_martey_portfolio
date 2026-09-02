@@ -212,7 +212,7 @@ function AdminHome() {
               recentProjects.map((project, i) => (
                 <div key={project.id} className="w-full">
                   <Link
-                    to={`/projects/${project.slug}`}
+                    to={`/007/admin/projects/edit/${project.slug}`}
                     className="flex w-full items-center justify-between gap-3 rounded-md px-2 py-2 transition-colors hover:bg-muted/50"
                   >
                     <div className="min-w-0">

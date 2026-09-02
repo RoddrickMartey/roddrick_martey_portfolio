@@ -8,6 +8,23 @@ import { Input } from "@/components/ui/input"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
 import { ResourceLoader } from "@/components/resource-loader"
+import { getApiErrorMessage } from "@/lib/apiError"
+import { toast } from "@/components/ui/toast"
+import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   useCreateSkill,
   useCreateSkillCategory,
@@ -74,30 +91,136 @@ function AdminSkills() {
     resolver: zodResolver(createSkillSchema),
     defaultValues: skillDefaults,
   })
+  const [editingCategory, setEditingCategory] = useState<string | null>(null)
+  const [editingSkill, setEditingSkill] = useState<string | null>(null)
+  const categoryEditForm = useForm<SkillCategoryFormValues>({
+    resolver: zodResolver(createSkillCategorySchema),
+    defaultValues: categoryDefaults,
+  })
+  const skillEditForm = useForm<SkillFormValues>({
+    resolver: zodResolver(createSkillSchema),
+    defaultValues: skillDefaults,
+  })
 
   const isLoading = categoriesLoading || skillsLoading
   const isError = categoriesError || skillsError
   const error = categoriesRequestError || skillsRequestError
 
   const onCreateCategory = (values: SkillCategoryFormValues) => {
-    createCategory(values)
-    categoryForm.reset(categoryDefaults)
+    createCategory(values, {
+      onSuccess: () => {
+        categoryForm.reset(categoryDefaults)
+        toast.add({
+          title: "Skill category created",
+          description: "The skill category was added successfully.",
+          type: "success",
+        })
+      },
+      onError: (error) => {
+        toast.add({
+          title: "Could not create skill category",
+          description: getApiErrorMessage(
+            error,
+            "The skill category could not be created. Please try again."
+          ),
+          type: "error",
+        })
+      },
+    })
   }
 
   const onCreateSkill = (values: SkillFormValues) => {
-    createSkill({
-      ...values,
-      categoryId: values.categoryId ?? null,
-    })
-    skillForm.reset(skillDefaults)
+    createSkill(
+      {
+        ...values,
+        categoryId: values.categoryId ?? null,
+      },
+      {
+        onSuccess: () => {
+          skillForm.reset(skillDefaults)
+          toast.add({
+            title: "Skill created",
+            description: "The skill was added successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) => {
+          toast.add({
+            title: "Could not create skill",
+            description: getApiErrorMessage(
+              error,
+              "The skill could not be created. Please try again."
+            ),
+            type: "error",
+          })
+        },
+      }
+    )
   }
 
   const onEditCategory = (id: string, name: string) => {
-    updateCategory({ id, input: { name } })
+    categoryEditForm.reset({
+      name,
+      order: categories?.find((item) => item.id === id)?.order ?? 0,
+    })
+    setEditingCategory(id)
   }
 
   const onEditSkill = (id: string, values: SkillFormValues) => {
-    updateSkill({ id, input: values })
+    skillEditForm.reset(values)
+    setEditingSkill(id)
+  }
+
+  const onUpdateCategory = (values: SkillCategoryFormValues) => {
+    if (!editingCategory) return
+    updateCategory(
+      { id: editingCategory, input: values },
+      {
+        onSuccess: () => {
+          setEditingCategory(null)
+          toast.add({
+            title: "Skill category updated",
+            description: "The skill category was updated successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) =>
+          toast.add({
+            title: "Could not update skill category",
+            description: getApiErrorMessage(
+              error,
+              "The skill category could not be updated."
+            ),
+            type: "error",
+          }),
+      }
+    )
+  }
+
+  const onUpdateSkill = (values: SkillFormValues) => {
+    if (!editingSkill) return
+    updateSkill(
+      { id: editingSkill, input: values },
+      {
+        onSuccess: () => {
+          setEditingSkill(null)
+          toast.add({
+            title: "Skill updated",
+            description: "The skill was updated successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) =>
+          toast.add({
+            title: "Could not update skill",
+            description: getApiErrorMessage(
+              error,
+              "The skill could not be updated."
+            ),
+            type: "error",
+          }),
+      }
+    )
   }
 
   if (isLoading) {
@@ -230,32 +353,50 @@ function AdminSkills() {
 
               <Field>
                 <FieldLabel htmlFor="categoryId">Category</FieldLabel>
-                <select
-                  id="categoryId"
-                  className="h-8 w-full border border-input bg-transparent px-2.5 text-xs"
-                  {...skillForm.register("categoryId")}
+                <Select
+                  value={skillForm.watch("categoryId") ?? ""}
+                  onValueChange={(value) =>
+                    skillForm.setValue("categoryId", value || null)
+                  }
                 >
-                  <option value="">Uncategorized</option>
-                  {categories?.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Uncategorized" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Uncategorized</SelectItem>
+                    {categories?.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="level">Level</FieldLabel>
-                <select
-                  id="level"
-                  className="h-8 w-full border border-input bg-transparent px-2.5 text-xs"
-                  {...skillForm.register("level")}
+                <Select
+                  value={skillForm.watch("level")}
+                  onValueChange={(value) =>
+                    skillForm.setValue(
+                      "level",
+                      value as SkillFormValues["level"]
+                    )
+                  }
                 >
-                  <option value="BEGINNER">Beginner</option>
-                  <option value="INTERMEDIATE">Intermediate</option>
-                  <option value="ADVANCED">Advanced</option>
-                  <option value="EXPERT">Expert</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["BEGINNER", "INTERMEDIATE", "ADVANCED", "EXPERT"].map(
+                      (level) => (
+                        <SelectItem key={level} value={level}>
+                          {level}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
               </Field>
 
               <Button
@@ -321,6 +462,108 @@ function AdminSkills() {
           )}
         </CardContent>
       </Card>
+      <Dialog
+        open={!!editingCategory}
+        onOpenChange={(open) => !open && setEditingCategory(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit skill category</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={categoryEditForm.handleSubmit(onUpdateCategory)}
+            className="space-y-4"
+          >
+            <Input
+              {...categoryEditForm.register("name")}
+              placeholder="Category name"
+            />
+            <Input
+              type="number"
+              {...categoryEditForm.register("order", { valueAsNumber: true })}
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditingCategory(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={!!editingSkill}
+        onOpenChange={(open) => !open && setEditingSkill(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit skill</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={skillEditForm.handleSubmit(onUpdateSkill)}
+            className="space-y-4"
+          >
+            <Input
+              {...skillEditForm.register("name")}
+              placeholder="Skill name"
+            />
+            <Select
+              value={skillEditForm.watch("categoryId") ?? ""}
+              onValueChange={(value) =>
+                skillEditForm.setValue("categoryId", value || null)
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Uncategorized" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Uncategorized</SelectItem>
+                {categories?.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={skillEditForm.watch("level")}
+              onValueChange={(value) =>
+                skillEditForm.setValue(
+                  "level",
+                  value as SkillFormValues["level"]
+                )
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {["BEGINNER", "INTERMEDIATE", "ADVANCED", "EXPERT"].map(
+                  (level) => (
+                    <SelectItem key={level} value={level}>
+                      {level}
+                    </SelectItem>
+                  )
+                )}
+              </SelectContent>
+            </Select>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditingSkill(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }

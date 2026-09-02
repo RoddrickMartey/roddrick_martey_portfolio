@@ -23,9 +23,11 @@ export function useCreateSkillCategory() {
   return useMutation({
     mutationFn: (input: CreateSkillCategoryInput) =>
       skillApi.createCategory(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: SKILLS_QUERY_KEY })
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY }),
+        queryClient.refetchQueries({ queryKey: SKILLS_QUERY_KEY }),
+      ])
     },
   })
 }
@@ -36,9 +38,11 @@ export function useUpdateSkillCategory() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: SkillCategoryInput }) =>
       skillApi.updateCategory(id, input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: SKILLS_QUERY_KEY })
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY }),
+        queryClient.refetchQueries({ queryKey: SKILLS_QUERY_KEY }),
+      ])
     },
   })
 }
@@ -67,9 +71,11 @@ export function useCreateSkill() {
 
   return useMutation({
     mutationFn: (input: CreateSkillInput) => skillApi.create(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SKILLS_QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY })
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: SKILLS_QUERY_KEY }),
+        queryClient.refetchQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY }),
+      ])
     },
   })
 }
@@ -80,9 +86,11 @@ export function useUpdateSkill() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: SkillInput }) =>
       skillApi.update(id, input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SKILLS_QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY })
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: SKILLS_QUERY_KEY }),
+        queryClient.refetchQueries({ queryKey: SKILL_CATEGORIES_QUERY_KEY }),
+      ])
     },
   })
 }

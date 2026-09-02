@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus, Trash2 } from "lucide-react"
+import { Pencil, Plus, Trash2 } from "lucide-react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
@@ -9,6 +10,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
 import { ResourceLoader } from "@/components/resource-loader"
+import { toDateInputValue, toIsoDateTime } from "@/lib/date"
+import { getApiErrorMessage } from "@/lib/apiError"
+import { toast } from "@/components/ui/toast"
 import {
   useCreateEducation,
   useDeleteEducation,
@@ -20,6 +24,13 @@ import {
   type EducationFormValues,
 } from "@/schema/educationSchema"
 import type { Education } from "@/types/education"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 const emptyValues: EducationFormValues = {
   degree: "",
@@ -50,29 +61,89 @@ function AdminEducation() {
     resolver: zodResolver(createEducationSchema),
     defaultValues: emptyValues,
   })
+  const [editing, setEditing] = useState<Education | null>(null)
+  const editForm = useForm<EducationFormValues>({
+    resolver: zodResolver(createEducationSchema),
+    defaultValues: emptyValues,
+  })
 
   const onCreate = (values: EducationFormValues) => {
-    createEducation({
-      ...values,
-      location: values.location ?? undefined,
-      endDate: values.endDate ?? undefined,
-      description: values.description ?? undefined,
-    })
-    form.reset(emptyValues)
+    createEducation(
+      {
+        ...values,
+        location: values.location ?? undefined,
+        startDate: toIsoDateTime(values.startDate) ?? "",
+        endDate: toIsoDateTime(values.endDate),
+        description: values.description ?? undefined,
+      },
+      {
+        onSuccess: () => {
+          form.reset(emptyValues)
+          toast.add({
+            title: "Education created",
+            description: "The education record was added successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) => {
+          toast.add({
+            title: "Could not create education",
+            description: getApiErrorMessage(
+              error,
+              "The education record could not be created. Please try again."
+            ),
+            type: "error",
+          })
+        },
+      }
+    )
   }
 
   const onEdit = (item: Education) => {
-    const payload: EducationFormValues = {
+    editForm.reset({
       degree: item.degree,
       institution: item.institution,
       location: item.location ?? undefined,
-      startDate: item.startDate,
-      endDate: item.endDate ?? undefined,
+      startDate: toDateInputValue(item.startDate) ?? "",
+      endDate: toDateInputValue(item.endDate),
       description: item.description ?? undefined,
       order: item.order,
-    }
+    })
+    setEditing(item)
+  }
 
-    updateEducation({ id: item.id, input: payload })
+  const onUpdate = (values: EducationFormValues) => {
+    if (!editing) return
+
+    updateEducation(
+      {
+        id: editing.id,
+        input: {
+          ...values,
+          startDate: toIsoDateTime(values.startDate) ?? "",
+          endDate: toIsoDateTime(values.endDate),
+        },
+      },
+      {
+        onSuccess: () => {
+          setEditing(null)
+          toast.add({
+            title: "Education updated",
+            description: "The education record was updated successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) =>
+          toast.add({
+            title: "Could not update education",
+            description: getApiErrorMessage(
+              error,
+              "The education record could not be updated."
+            ),
+            type: "error",
+          }),
+      }
+    )
   }
 
   if (isLoading) {
@@ -136,7 +207,8 @@ function AdminEducation() {
                         size="sm"
                         onClick={() => onEdit(item)}
                       >
-                        Update
+                        <Pencil className="mr-1 h-4 w-4" />
+                        Edit
                       </Button>
                       <Button
                         type="button"
@@ -246,6 +318,45 @@ function AdminEducation() {
           </CardContent>
         </Card>
       </div>
+      <Dialog
+        open={!!editing}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit education</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={editForm.handleSubmit(onUpdate)}
+            className="space-y-4"
+          >
+            <Input placeholder="Degree" {...editForm.register("degree")} />
+            <Input
+              placeholder="Institution"
+              {...editForm.register("institution")}
+            />
+            <Input placeholder="Location" {...editForm.register("location")} />
+            <div className="grid grid-cols-2 gap-3">
+              <Input type="date" {...editForm.register("startDate")} />
+              <Input type="date" {...editForm.register("endDate")} />
+            </div>
+            <Textarea
+              placeholder="Description"
+              {...editForm.register("description")}
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditing(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }

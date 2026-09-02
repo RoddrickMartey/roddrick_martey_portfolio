@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus, Trash2 } from "lucide-react"
+import { Pencil, Plus, Trash2 } from "lucide-react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
@@ -8,6 +9,9 @@ import { Input } from "@/components/ui/input"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
 import { ResourceLoader } from "@/components/resource-loader"
+import { toDateInputValue, toIsoDateTime } from "@/lib/date"
+import { getApiErrorMessage } from "@/lib/apiError"
+import { toast } from "@/components/ui/toast"
 import {
   useCertifications,
   useCreateCertification,
@@ -19,6 +23,13 @@ import {
   type CertificationFormValues,
 } from "@/schema/certificationSchema"
 import type { Certification } from "@/types/certification"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 const emptyValues: CertificationFormValues = {
   name: "",
@@ -50,31 +61,84 @@ function AdminCertification() {
     resolver: zodResolver(createCertificationSchema),
     defaultValues: emptyValues,
   })
+  const [editing, setEditing] = useState<Certification | null>(null)
+  const editForm = useForm<CertificationFormValues>({
+    resolver: zodResolver(createCertificationSchema),
+    defaultValues: emptyValues,
+  })
 
   const onCreate = (values: CertificationFormValues) => {
-    createCertification({
-      ...values,
-      platform: values.platform ?? undefined,
-      dateEarned: values.dateEarned ?? undefined,
-      verifyUrl: values.verifyUrl ?? undefined,
-    })
-    form.reset(emptyValues)
+    createCertification(
+      {
+        ...values,
+        platform: values.platform ?? undefined,
+        dateEarned: toIsoDateTime(values.dateEarned),
+        verifyUrl: values.verifyUrl ?? undefined,
+      },
+      {
+        onSuccess: () => {
+          form.reset(emptyValues)
+          toast.add({
+            title: "Certification created",
+            description: "The certification was added successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) => {
+          toast.add({
+            title: "Could not create certification",
+            description: getApiErrorMessage(
+              error,
+              "The certification could not be created. Please try again."
+            ),
+            type: "error",
+          })
+        },
+      }
+    )
   }
 
   const onEdit = (item: Certification) => {
-    updateCertification({
-      id: item.id,
-      input: {
-        name: item.name,
-        issuer: item.issuer,
-        platform: item.platform ?? undefined,
-        dateEarned: item.dateEarned ?? undefined,
-        verifyUrl: item.verifyUrl ?? undefined,
-        honours: item.honours,
-        featured: item.featured,
-        order: item.order,
-      },
+    editForm.reset({
+      name: item.name,
+      issuer: item.issuer,
+      platform: item.platform ?? undefined,
+      dateEarned: toDateInputValue(item.dateEarned),
+      verifyUrl: item.verifyUrl ?? undefined,
+      honours: item.honours,
+      featured: item.featured,
+      order: item.order,
     })
+    setEditing(item)
+  }
+
+  const onUpdate = (values: CertificationFormValues) => {
+    if (!editing) return
+    updateCertification(
+      {
+        id: editing.id,
+        input: { ...values, dateEarned: toIsoDateTime(values.dateEarned) },
+      },
+      {
+        onSuccess: () => {
+          setEditing(null)
+          toast.add({
+            title: "Certification updated",
+            description: "The certification was updated successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) =>
+          toast.add({
+            title: "Could not update certification",
+            description: getApiErrorMessage(
+              error,
+              "The certification could not be updated."
+            ),
+            type: "error",
+          }),
+      }
+    )
   }
 
   if (isLoading) {
@@ -138,7 +202,8 @@ function AdminCertification() {
                         size="sm"
                         onClick={() => onEdit(item)}
                       >
-                        Update
+                        <Pencil className="mr-1 h-4 w-4" />
+                        Edit
                       </Button>
                       <Button
                         type="button"
@@ -240,6 +305,39 @@ function AdminCertification() {
           </CardContent>
         </Card>
       </div>
+      <Dialog
+        open={!!editing}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit certification</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={editForm.handleSubmit(onUpdate)}
+            className="space-y-4"
+          >
+            <Input placeholder="Certification" {...editForm.register("name")} />
+            <Input placeholder="Issuer" {...editForm.register("issuer")} />
+            <Input placeholder="Platform" {...editForm.register("platform")} />
+            <Input type="date" {...editForm.register("dateEarned")} />
+            <Input
+              placeholder="Verification URL"
+              {...editForm.register("verifyUrl")}
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditing(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }

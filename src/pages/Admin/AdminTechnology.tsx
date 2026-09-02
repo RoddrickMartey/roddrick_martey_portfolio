@@ -9,6 +9,16 @@ import { Textarea } from "@/components/ui/textarea"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
 import { ResourceLoader } from "@/components/resource-loader"
+import { getApiErrorMessage } from "@/lib/apiError"
+import { toast } from "@/components/ui/toast"
+import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   useCreateTechnology,
   useDeleteTechnology,
@@ -44,23 +54,70 @@ function AdminTechnology() {
     resolver: zodResolver(createTechnologySchema),
     defaultValues: emptyValues,
   })
+  const [editing, setEditing] = useState<string | null>(null)
+  const editForm = useForm<TechnologyFormValues>({
+    resolver: zodResolver(createTechnologySchema),
+    defaultValues: emptyValues,
+  })
 
   const onCreate = (values: TechnologyFormValues) => {
-    createTechnology({
-      name: values.name,
-      description: values.description ?? undefined,
-    })
-    form.reset(emptyValues)
+    createTechnology(
+      {
+        name: values.name,
+        description: values.description ?? undefined,
+      },
+      {
+        onSuccess: () => {
+          form.reset(emptyValues)
+          toast.add({
+            title: "Technology created",
+            description: "The technology was added successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) => {
+          toast.add({
+            title: "Could not create technology",
+            description: getApiErrorMessage(
+              error,
+              "The technology could not be created. Please try again."
+            ),
+            type: "error",
+          })
+        },
+      }
+    )
   }
 
   const onEdit = (id: string, name: string, description: string | null) => {
-    updateTechnology({
-      id,
-      input: {
-        name,
-        description: description ?? undefined,
-      },
-    })
+    editForm.reset({ name, description: description ?? undefined })
+    setEditing(id)
+  }
+
+  const onUpdate = (values: TechnologyFormValues) => {
+    if (!editing) return
+    updateTechnology(
+      { id: editing, input: values },
+      {
+        onSuccess: () => {
+          setEditing(null)
+          toast.add({
+            title: "Technology updated",
+            description: "The technology was updated successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) =>
+          toast.add({
+            title: "Could not update technology",
+            description: getApiErrorMessage(
+              error,
+              "The technology could not be updated."
+            ),
+            type: "error",
+          }),
+      }
+    )
   }
 
   if (isLoading) {
@@ -90,6 +147,36 @@ function AdminTechnology() {
           Manage the technologies used across projects
         </p>
       </div>
+      <Dialog
+        open={!!editing}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit technology</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={editForm.handleSubmit(onUpdate)}
+            className="space-y-4"
+          >
+            <Input placeholder="Name" {...editForm.register("name")} />
+            <Textarea
+              placeholder="Description"
+              {...editForm.register("description")}
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditing(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <Card>

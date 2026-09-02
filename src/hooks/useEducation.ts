@@ -16,8 +16,8 @@ export function useCreateEducation() {
 
   return useMutation({
     mutationFn: (input: CreateEducationInput) => educationApi.create(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: EDUCATION_QUERY_KEY })
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: EDUCATION_QUERY_KEY })
     },
   })
 }
@@ -28,8 +28,8 @@ export function useUpdateEducation() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: EducationInput }) =>
       educationApi.update(id, input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: EDUCATION_QUERY_KEY })
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: EDUCATION_QUERY_KEY })
     },
   })
 }

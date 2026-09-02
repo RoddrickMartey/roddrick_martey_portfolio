@@ -19,8 +19,8 @@ export function useCreateTechnology() {
 
   return useMutation({
     mutationFn: (input: CreateTechnologyInput) => technologyApi.create(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: TECHNOLOGIES_QUERY_KEY })
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: TECHNOLOGIES_QUERY_KEY })
     },
   })
 }
@@ -31,8 +31,8 @@ export function useUpdateTechnology() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: UpdateTechnologyInput }) =>
       technologyApi.update(id, input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: TECHNOLOGIES_QUERY_KEY })
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: TECHNOLOGIES_QUERY_KEY })
     },
   })
 }

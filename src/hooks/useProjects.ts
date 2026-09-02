@@ -12,10 +12,25 @@ export function useProjects(featured?: boolean) {
   })
 }
 
+export function useAdminProjects(featured?: boolean) {
+  return useQuery({
+    queryKey: [...PROJECTS_QUERY_KEY, "admin", { featured }],
+    queryFn: () => projectApi.getAdminAll(featured),
+  })
+}
+
 export function useProject(slug: string) {
   return useQuery({
     queryKey: PROJECT_QUERY_KEY(slug),
     queryFn: () => projectApi.getBySlug(slug),
+    enabled: !!slug,
+  })
+}
+
+export function useAdminProject(slug: string) {
+  return useQuery({
+    queryKey: [...PROJECT_QUERY_KEY(slug), "admin"],
+    queryFn: () => projectApi.getAdminBySlug(slug),
     enabled: !!slug,
   })
 }

@@ -40,6 +40,8 @@ import {
 } from "lucide-react"
 import { GithubLogoIcon } from "@phosphor-icons/react"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiErrorMessage } from "@/lib/apiError"
+import { toast } from "@/components/ui/toast"
 
 function AdminProjectCreate() {
   const navigate = useNavigate()
@@ -109,7 +111,22 @@ function AdminProjectCreate() {
   const onSubmit = (input: CreateProjectInput) => {
     createProject(input, {
       onSuccess: (project) => {
-        navigate(`/007/admin/projects/${project.id}`)
+        toast.add({
+          title: "Project created",
+          description: "The project was added successfully.",
+          type: "success",
+        })
+        navigate(`/007/admin/projects/edit/${project.slug}`)
+      },
+      onError: (error) => {
+        toast.add({
+          title: "Could not create project",
+          description: getApiErrorMessage(
+            error,
+            "The project could not be created. Please try again."
+          ),
+          type: "error",
+        })
       },
     })
   }

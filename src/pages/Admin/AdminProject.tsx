@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { useProjects } from "@/hooks/useProjects"
+import { useAdminProjects } from "@/hooks/useProjects"
 import { ResourceError } from "@/components/resource-error"
 import { ResourceLoader } from "@/components/resource-loader"
 import { EmptyResource } from "@/components/empty-component"
@@ -18,7 +18,7 @@ function AdminProject() {
     error,
     refetch,
     isRefetching,
-  } = useProjects()
+  } = useAdminProjects()
 
   // 1. Loading State
   if (isLoading && !isFetched) {

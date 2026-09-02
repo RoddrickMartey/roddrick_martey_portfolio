@@ -6,7 +6,7 @@ import {
   updateProjectSchema,
   type UpdateProjectInput,
 } from "@/schema/projectSchema"
-import { useProject, useUpdateProject } from "@/hooks/useProjects"
+import { useAdminProject, useUpdateProject } from "@/hooks/useProjects"
 import { useTechnologies } from "@/hooks/useTechnologies"
 import { fileToBase64 } from "@/lib/fileToBase64"
 import { validateFile } from "@/lib/validateFile"
@@ -46,7 +46,9 @@ function AdminProjectEdit() {
   const navigate = useNavigate()
   const { slug } = useParams<{ slug: string }>()
 
-  const { data: project, isLoading: isLoadingProject } = useProject(slug ?? "")
+  const { data: project, isLoading: isLoadingProject } = useAdminProject(
+    slug ?? ""
+  )
   const { data: technologies } = useTechnologies()
   const { mutate: updateProject, isPending } = useUpdateProject()
 

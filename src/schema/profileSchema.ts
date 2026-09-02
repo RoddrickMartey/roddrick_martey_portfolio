@@ -26,9 +26,18 @@ export type UpdateProfileBasicInput = z.infer<typeof updateProfileBasicSchema>
 export const updateProfileContactSchema = z.object({
   email: z.string().email("Valid email is required").optional(),
   phone: z.string().nullable().optional(),
-  linkedinUrl: z.string().url("Valid URL is required").nullable().optional(),
-  githubUrl: z.string().url("Valid URL is required").nullable().optional(),
-  websiteUrl: z.string().url("Valid URL is required").nullable().optional(),
+  linkedinUrl: z
+    .union([z.string().url("Valid URL is required"), z.literal(""), z.null()])
+    .transform((value) => (value === "" ? null : value))
+    .optional(),
+  githubUrl: z
+    .union([z.string().url("Valid URL is required"), z.literal(""), z.null()])
+    .transform((value) => (value === "" ? null : value))
+    .optional(),
+  websiteUrl: z
+    .union([z.string().url("Valid URL is required"), z.literal(""), z.null()])
+    .transform((value) => (value === "" ? null : value))
+    .optional(),
 })
 export type UpdateProfileContactInput = z.infer<
   typeof updateProfileContactSchema

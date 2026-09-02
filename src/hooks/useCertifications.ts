@@ -20,8 +20,8 @@ export function useCreateCertification() {
   return useMutation({
     mutationFn: (input: CreateCertificationInput) =>
       certificationApi.create(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: CERTIFICATIONS_QUERY_KEY })
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: CERTIFICATIONS_QUERY_KEY })
     },
   })
 }
@@ -32,8 +32,8 @@ export function useUpdateCertification() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: CertificationInput }) =>
       certificationApi.update(id, input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: CERTIFICATIONS_QUERY_KEY })
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: CERTIFICATIONS_QUERY_KEY })
     },
   })
 }

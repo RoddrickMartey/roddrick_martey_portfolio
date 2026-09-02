@@ -9,6 +9,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
 import { ResourceLoader } from "@/components/resource-loader"
+import { toDateInputValue, toIsoDateTime } from "@/lib/date"
+import { getApiErrorMessage } from "@/lib/apiError"
+import { toast } from "@/components/ui/toast"
 import {
   useCreateExperience,
   useDeleteExperience,
@@ -68,15 +71,37 @@ function AdminExperience() {
   const onCreate = (values: ExperienceFormValues) => {
     const payload = {
       ...values,
-      bullets: values.bullets ?? [],
+      startDate: toIsoDateTime(values.startDate) ?? "",
+      endDate: toIsoDateTime(values.endDate),
+      bullets: (values.bullets ?? [])
+        .flatMap((bullet) => bullet.split("\n"))
+        .map((bullet) => bullet.trim())
+        .filter(Boolean),
       employmentType: values.employmentType ?? undefined,
       description: values.description ?? undefined,
       location: values.location ?? undefined,
-      endDate: values.endDate ?? undefined,
     }
 
-    createExperience(payload)
-    reset(emptyValues)
+    createExperience(payload, {
+      onSuccess: () => {
+        reset(emptyValues)
+        toast.add({
+          title: "Experience created",
+          description: "The experience record was added successfully.",
+          type: "success",
+        })
+      },
+      onError: (error) => {
+        toast.add({
+          title: "Could not create experience",
+          description: getApiErrorMessage(
+            error,
+            "The experience record could not be created. Please try again."
+          ),
+          type: "error",
+        })
+      },
+    })
   }
 
   const onEdit = (experience: Experience) => {
@@ -86,8 +111,8 @@ function AdminExperience() {
       employmentType: experience.employmentType ?? undefined,
       description: experience.description ?? undefined,
       location: experience.location ?? undefined,
-      startDate: experience.startDate,
-      endDate: experience.endDate ?? undefined,
+      startDate: toDateInputValue(experience.startDate) ?? "",
+      endDate: toDateInputValue(experience.endDate),
       bullets: experience.bullets,
       order: experience.order,
     })
@@ -98,13 +123,20 @@ function AdminExperience() {
       employmentType: experience.employmentType ?? undefined,
       description: experience.description ?? undefined,
       location: experience.location ?? undefined,
-      startDate: experience.startDate,
-      endDate: experience.endDate ?? undefined,
+      startDate: toDateInputValue(experience.startDate) ?? "",
+      endDate: toDateInputValue(experience.endDate),
       bullets: experience.bullets,
       order: experience.order,
     }
 
-    updateExperience({ id: experience.id, input: payload })
+    updateExperience({
+      id: experience.id,
+      input: {
+        ...payload,
+        startDate: toIsoDateTime(payload.startDate) ?? "",
+        endDate: toIsoDateTime(payload.endDate),
+      },
+    })
   }
 
   if (isLoading) {
@@ -158,7 +190,7 @@ function AdminExperience() {
               experiences.map((experience) => (
                 <div
                   key={experience.id}
-                  className="space-y-3 rounded-lg border border-border p-3"
+                  className="space-y-3 border border-border p-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
