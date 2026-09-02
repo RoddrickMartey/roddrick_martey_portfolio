@@ -46,7 +46,8 @@ function AdminTechnology() {
   } = useTechnologies()
   const { mutate: createTechnology, isPending: isCreating } =
     useCreateTechnology()
-  const { mutate: updateTechnology } = useUpdateTechnology()
+  const { mutate: updateTechnology, isPending: isUpdating } =
+    useUpdateTechnology()
   const { mutate: deleteTechnology, isPending: isDeleting } =
     useDeleteTechnology()
 
@@ -172,7 +173,9 @@ function AdminTechnology() {
               >
                 Cancel
               </Button>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? "Saving..." : "Save changes"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -196,7 +199,7 @@ function AdminTechnology() {
                 {technologies.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-2 rounded-md border border-border px-3 py-2"
+                    className="flex items-center gap-2 border border-border px-3 py-2"
                   >
                     <span className="text-sm font-medium">{item.name}</span>
                     <Button

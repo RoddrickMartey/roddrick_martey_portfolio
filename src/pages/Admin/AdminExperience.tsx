@@ -12,6 +12,14 @@ import { ResourceLoader } from "@/components/resource-loader"
 import { toDateInputValue, toIsoDateTime } from "@/lib/date"
 import { getApiErrorMessage } from "@/lib/apiError"
 import { toast } from "@/components/ui/toast"
+import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   useCreateExperience,
   useDeleteExperience,
@@ -49,7 +57,8 @@ function AdminExperience() {
   } = useExperiences()
   const { mutate: createExperience, isPending: isCreating } =
     useCreateExperience()
-  const { mutate: updateExperience } = useUpdateExperience()
+  const { mutate: updateExperience, isPending: isUpdating } =
+    useUpdateExperience()
   const { mutate: deleteExperience, isPending: isDeleting } =
     useDeleteExperience()
 
@@ -63,10 +72,11 @@ function AdminExperience() {
     defaultValues: emptyValues,
   })
 
-  const editingId = useForm<ExperienceUpdateFormValues>({
+  const editForm = useForm<ExperienceUpdateFormValues>({
     resolver: zodResolver(updateExperienceSchema),
     defaultValues: emptyValues,
   })
+  const [editing, setEditing] = useState<Experience | null>(null)
 
   const onCreate = (values: ExperienceFormValues) => {
     const payload = {
@@ -105,7 +115,7 @@ function AdminExperience() {
   }
 
   const onEdit = (experience: Experience) => {
-    editingId.reset({
+    editForm.reset({
       role: experience.role,
       organization: experience.organization,
       employmentType: experience.employmentType ?? undefined,
@@ -113,30 +123,49 @@ function AdminExperience() {
       location: experience.location ?? undefined,
       startDate: toDateInputValue(experience.startDate) ?? "",
       endDate: toDateInputValue(experience.endDate),
-      bullets: experience.bullets,
+      bullets: [experience.bullets.join("\n")],
       order: experience.order,
     })
+    setEditing(experience)
+  }
 
-    const payload = {
-      role: experience.role,
-      organization: experience.organization,
-      employmentType: experience.employmentType ?? undefined,
-      description: experience.description ?? undefined,
-      location: experience.location ?? undefined,
-      startDate: toDateInputValue(experience.startDate) ?? "",
-      endDate: toDateInputValue(experience.endDate),
-      bullets: experience.bullets,
-      order: experience.order,
-    }
+  const onUpdate = (values: ExperienceUpdateFormValues) => {
+    if (!editing) return
 
-    updateExperience({
-      id: experience.id,
-      input: {
-        ...payload,
-        startDate: toIsoDateTime(payload.startDate) ?? "",
-        endDate: toIsoDateTime(payload.endDate),
+    updateExperience(
+      {
+        id: editing.id,
+        input: {
+          ...values,
+          startDate: toIsoDateTime(values.startDate),
+          endDate: toIsoDateTime(values.endDate),
+          bullets: (values.bullets ?? [])
+            .flatMap((bullet) => bullet.split("\n"))
+            .map((bullet) => bullet.trim())
+            .filter(Boolean),
+        },
       },
-    })
+      {
+        onSuccess: () => {
+          setEditing(null)
+          toast.add({
+            title: "Experience updated",
+            description: "The experience record was updated successfully.",
+            type: "success",
+          })
+        },
+        onError: (error) => {
+          toast.add({
+            title: "Could not update experience",
+            description: getApiErrorMessage(
+              error,
+              "The experience record could not be updated."
+            ),
+            type: "error",
+          })
+        },
+      }
+    )
   }
 
   if (isLoading) {
@@ -168,6 +197,67 @@ function AdminExperience() {
           </p>
         </div>
       </div>
+      <Dialog
+        open={!!editing}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit experience</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={editForm.handleSubmit(onUpdate)}
+            className="space-y-4"
+          >
+            <Input placeholder="Role" {...editForm.register("role")} />
+            <Input
+              placeholder="Organization"
+              {...editForm.register("organization")}
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input
+                placeholder="Employment type"
+                {...editForm.register("employmentType")}
+              />
+              <Input
+                placeholder="Location"
+                {...editForm.register("location")}
+              />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input type="date" {...editForm.register("startDate")} />
+              <Input type="date" {...editForm.register("endDate")} />
+            </div>
+            <Textarea
+              placeholder="Description"
+              rows={4}
+              {...editForm.register("description")}
+            />
+            <Textarea
+              placeholder="One achievement per line"
+              rows={5}
+              {...editForm.register("bullets.0")}
+            />
+            <Input
+              type="number"
+              placeholder="Display order"
+              {...editForm.register("order", { valueAsNumber: true })}
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditing(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? "Saving..." : "Save changes"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <Card>

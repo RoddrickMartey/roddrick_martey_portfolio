@@ -53,7 +53,8 @@ function AdminEducation() {
   } = useEducation()
   const { mutate: createEducation, isPending: isCreating } =
     useCreateEducation()
-  const { mutate: updateEducation } = useUpdateEducation()
+  const { mutate: updateEducation, isPending: isUpdating } =
+    useUpdateEducation()
   const { mutate: deleteEducation, isPending: isDeleting } =
     useDeleteEducation()
 
@@ -120,6 +121,8 @@ function AdminEducation() {
         id: editing.id,
         input: {
           ...values,
+          location: values.location ?? undefined,
+          description: values.description ?? undefined,
           startDate: toIsoDateTime(values.startDate) ?? "",
           endDate: toIsoDateTime(values.endDate),
         },
@@ -189,10 +192,7 @@ function AdminEducation() {
               />
             ) : (
               education.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-lg border border-border p-3"
-                >
+                <div key={item.id} className="border border-border p-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium">{item.degree}</p>
@@ -318,6 +318,7 @@ function AdminEducation() {
           </CardContent>
         </Card>
       </div>
+
       <Dialog
         open={!!editing}
         onOpenChange={(open) => !open && setEditing(null)}
@@ -329,21 +330,84 @@ function AdminEducation() {
           <form
             onSubmit={editForm.handleSubmit(onUpdate)}
             className="space-y-4"
+            noValidate
           >
-            <Input placeholder="Degree" {...editForm.register("degree")} />
-            <Input
-              placeholder="Institution"
-              {...editForm.register("institution")}
-            />
-            <Input placeholder="Location" {...editForm.register("location")} />
+            <Field>
+              <FieldLabel htmlFor="edit-degree">Degree</FieldLabel>
+              <Input id="edit-degree" {...editForm.register("degree")} />
+              {editForm.formState.errors.degree && (
+                <FieldError>
+                  {editForm.formState.errors.degree.message}
+                </FieldError>
+              )}
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="edit-institution">Institution</FieldLabel>
+              <Input
+                id="edit-institution"
+                {...editForm.register("institution")}
+              />
+              {editForm.formState.errors.institution && (
+                <FieldError>
+                  {editForm.formState.errors.institution.message}
+                </FieldError>
+              )}
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="edit-location">Location</FieldLabel>
+              <Input id="edit-location" {...editForm.register("location")} />
+              {editForm.formState.errors.location && (
+                <FieldError>
+                  {editForm.formState.errors.location.message}
+                </FieldError>
+              )}
+            </Field>
+
             <div className="grid grid-cols-2 gap-3">
-              <Input type="date" {...editForm.register("startDate")} />
-              <Input type="date" {...editForm.register("endDate")} />
+              <Field>
+                <FieldLabel htmlFor="edit-startDate">Start date</FieldLabel>
+                <Input
+                  id="edit-startDate"
+                  type="date"
+                  {...editForm.register("startDate")}
+                />
+                {editForm.formState.errors.startDate && (
+                  <FieldError>
+                    {editForm.formState.errors.startDate.message}
+                  </FieldError>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="edit-endDate">End date</FieldLabel>
+                <Input
+                  id="edit-endDate"
+                  type="date"
+                  {...editForm.register("endDate")}
+                />
+                {editForm.formState.errors.endDate && (
+                  <FieldError>
+                    {editForm.formState.errors.endDate.message}
+                  </FieldError>
+                )}
+              </Field>
             </div>
-            <Textarea
-              placeholder="Description"
-              {...editForm.register("description")}
-            />
+
+            <Field>
+              <FieldLabel htmlFor="edit-description">Description</FieldLabel>
+              <Textarea
+                id="edit-description"
+                rows={4}
+                {...editForm.register("description")}
+              />
+              {editForm.formState.errors.description && (
+                <FieldError>
+                  {editForm.formState.errors.description.message}
+                </FieldError>
+              )}
+            </Field>
+
             <DialogFooter>
               <Button
                 type="button"
@@ -352,7 +416,9 @@ function AdminEducation() {
               >
                 Cancel
               </Button>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? "Saving..." : "Save changes"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

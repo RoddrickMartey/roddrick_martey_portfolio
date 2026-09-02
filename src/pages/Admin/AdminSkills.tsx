@@ -75,11 +75,12 @@ function AdminSkills() {
 
   const { mutate: createCategory, isPending: isCreatingCategory } =
     useCreateSkillCategory()
-  const { mutate: updateCategory } = useUpdateSkillCategory()
+  const { mutate: updateCategory, isPending: isUpdatingCategory } =
+    useUpdateSkillCategory()
   const { mutate: deleteCategory, isPending: isDeletingCategory } =
     useDeleteSkillCategory()
   const { mutate: createSkill, isPending: isCreatingSkill } = useCreateSkill()
-  const { mutate: updateSkill } = useUpdateSkill()
+  const { mutate: updateSkill, isPending: isUpdatingSkill } = useUpdateSkill()
   const { mutate: deleteSkill, isPending: isDeletingSkill } = useDeleteSkill()
 
   const categoryForm = useForm<SkillCategoryFormValues>({
@@ -272,7 +273,7 @@ function AdminSkills() {
             {categories?.map((category) => (
               <div
                 key={category.id}
-                className="flex items-center justify-between gap-2 rounded-md border border-border p-2"
+                className="flex items-center justify-between gap-2 border border-border p-2"
               >
                 <span className="text-sm font-medium">{category.name}</span>
                 <div className="flex gap-2">
@@ -490,7 +491,9 @@ function AdminSkills() {
               >
                 Cancel
               </Button>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" disabled={isUpdatingCategory}>
+                {isUpdatingCategory ? "Saving..." : "Save changes"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -559,7 +562,9 @@ function AdminSkills() {
               >
                 Cancel
               </Button>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" disabled={isUpdatingSkill}>
+                {isUpdatingSkill ? "Saving..." : "Save changes"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -16,8 +16,8 @@ export function useCreateExperience() {
 
   return useMutation({
     mutationFn: (input: CreateExperienceInput) => experienceApi.create(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: EXPERIENCES_QUERY_KEY })
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: EXPERIENCES_QUERY_KEY })
     },
   })
 }

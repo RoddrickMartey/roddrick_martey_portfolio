@@ -53,7 +53,8 @@ function AdminCertification() {
   } = useCertifications()
   const { mutate: createCertification, isPending: isCreating } =
     useCreateCertification()
-  const { mutate: updateCertification } = useUpdateCertification()
+  const { mutate: updateCertification, isPending: isUpdating } =
+    useUpdateCertification()
   const { mutate: deleteCertification, isPending: isDeleting } =
     useDeleteCertification()
 
@@ -117,7 +118,11 @@ function AdminCertification() {
     updateCertification(
       {
         id: editing.id,
-        input: { ...values, dateEarned: toIsoDateTime(values.dateEarned) },
+        input: {
+          ...values,
+          dateEarned: toIsoDateTime(values.dateEarned),
+          verifyUrl: values.verifyUrl || null,
+        },
       },
       {
         onSuccess: () => {
@@ -184,10 +189,7 @@ function AdminCertification() {
               />
             ) : (
               certifications.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-lg border border-border p-3"
-                >
+                <div key={item.id} className="border border-border p-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium">{item.name}</p>
@@ -333,7 +335,9 @@ function AdminCertification() {
               >
                 Cancel
               </Button>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? "Saving..." : "Save changes"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
