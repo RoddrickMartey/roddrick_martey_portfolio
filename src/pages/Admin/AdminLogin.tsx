@@ -22,6 +22,7 @@ import { useState } from "react"
 import { useAdminStore } from "@/store/adminStore"
 import { useNavigate } from "react-router-dom"
 import { toast } from "@/components/ui/toast"
+import { format } from "date-fns"
 
 function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
@@ -37,13 +38,7 @@ function AdminLogin() {
     defaultValues: { email: "", password: "" },
   })
   const formatedUpdateDate = (date: string) => {
-    return new Date(date).toLocaleString("en-US", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    return format(new Date(date), "MMMM d, yyyy 'at' h:mm a")
   }
   const onSubmit = async (data: AdminLoginInput) => {
     // Log the form values
@@ -101,6 +96,7 @@ function AdminLogin() {
                   {...register("email")}
                   aria-invalid={!!errors.email}
                   aria-describedby={errors.email ? "email-error" : undefined}
+                  disabled={isSubmitting}
                 />
                 <InputGroupAddon aria-hidden="true">
                   <LogIn className="h-4 w-4" />
@@ -127,6 +123,7 @@ function AdminLogin() {
                   aria-describedby={
                     errors.password ? "password-error" : undefined
                   }
+                  disabled={isSubmitting}
                 />
                 <InputGroupAddon aria-hidden="true">
                   <Key className="h-4 w-4" />
@@ -141,6 +138,7 @@ function AdminLogin() {
                     }
                     title={showPassword ? "Hide password" : "Show password"}
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isSubmitting}
                   >
                     {showPassword ? (
                       <EyeClosed className="h-4 w-4" aria-hidden="true" />

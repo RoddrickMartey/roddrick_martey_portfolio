@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { format } from "date-fns"
 import { Pencil, Plus, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -224,7 +225,10 @@ function AdminEducation() {
                   </div>
 
                   <div className="mt-2 text-xs text-muted-foreground">
-                    {item.startDate} - {item.endDate ?? "Present"}
+                    {format(new Date(item.startDate), "MMM yyyy")} -{" "}
+                    {item.endDate
+                      ? format(new Date(item.endDate), "MMM yyyy")
+                      : "Present"}
                     {item.location ? ` • ${item.location}` : ""}
                   </div>
 

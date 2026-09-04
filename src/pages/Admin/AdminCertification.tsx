@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { format } from "date-fns"
 import { Pencil, Plus, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -222,7 +223,9 @@ function AdminCertification() {
 
                   <div className="mt-2 text-xs text-muted-foreground">
                     {item.platform ?? "Platform not specified"}
-                    {item.dateEarned ? ` • ${item.dateEarned}` : ""}
+                    {item.dateEarned
+                      ? ` • ${format(new Date(item.dateEarned), "MMM d, yyyy")}`
+                      : ""}
                   </div>
                 </div>
               ))

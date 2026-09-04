@@ -15,6 +15,7 @@ import AdminEducation from "./pages/Admin/AdminEducation"
 import AdminSkills from "./pages/Admin/AdminSkills"
 import AdminTechnology from "./pages/Admin/AdminTechnology"
 import AdminMessages from "./pages/Admin/AdminMessages"
+import AdminLogs from "./pages/Admin/AdminLogs"
 import MainPage from "./pages/Portfolio/MainPage"
 import MainLayout from "./pages/Portfolio/layout/MainLayout"
 
@@ -52,6 +53,7 @@ export function App() {
           />
           <Route path="/007/admin/tech" element={<AdminTechnology />} />
           <Route path="/007/admin/messages" element={<AdminMessages />} />
+          <Route path="/007/admin/logs" element={<AdminLogs />} />
         </Route>
       </Route>
 

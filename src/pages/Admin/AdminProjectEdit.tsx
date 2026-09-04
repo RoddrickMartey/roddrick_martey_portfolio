@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useForm, Controller, useWatch, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { format } from "date-fns"
 import { useNavigate, useParams } from "react-router-dom"
 import {
   updateProjectSchema,
@@ -155,13 +156,7 @@ function AdminProjectEdit() {
     )
   }
   const formatedUpdateDate = (date: string) => {
-    return new Date(date).toLocaleString("en-US", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    return format(new Date(date), "MMMM d, yyyy 'at' h:mm a")
   }
   const onSubmit = (input: UpdateProjectInput) => {
     updateProject(

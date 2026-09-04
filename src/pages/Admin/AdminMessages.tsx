@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { format } from "date-fns"
 import { MailOpen, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -89,7 +90,7 @@ function AdminMessages() {
                     {message.subject || "No subject"}
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {new Date(message.createdAt).toLocaleDateString()}
+                    {format(new Date(message.createdAt), "MMM d, yyyy")}
                   </p>
                 </button>
               ))}

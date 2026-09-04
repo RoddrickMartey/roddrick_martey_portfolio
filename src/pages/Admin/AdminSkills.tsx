@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -91,6 +91,14 @@ function AdminSkills() {
   const skillForm = useForm<SkillFormValues>({
     resolver: zodResolver(createSkillSchema),
     defaultValues: skillDefaults,
+  })
+  const skillCategoryId = useWatch({
+    control: skillForm.control,
+    name: "categoryId",
+  })
+  const skillLevel = useWatch({
+    control: skillForm.control,
+    name: "level",
   })
   const [editingCategory, setEditingCategory] = useState<string | null>(null)
   const [editingSkill, setEditingSkill] = useState<string | null>(null)
@@ -355,7 +363,7 @@ function AdminSkills() {
               <Field>
                 <FieldLabel htmlFor="categoryId">Category</FieldLabel>
                 <Select
-                  value={skillForm.watch("categoryId") ?? ""}
+                  value={skillCategoryId ?? ""}
                   onValueChange={(value) =>
                     skillForm.setValue("categoryId", value || null)
                   }
@@ -377,7 +385,7 @@ function AdminSkills() {
               <Field>
                 <FieldLabel htmlFor="level">Level</FieldLabel>
                 <Select
-                  value={skillForm.watch("level")}
+                  value={skillLevel}
                   onValueChange={(value) =>
                     skillForm.setValue(
                       "level",

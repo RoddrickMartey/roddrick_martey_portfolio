@@ -9,6 +9,7 @@ import {
   Wrench,
   Cpu,
   Mail,
+  ScrollText,
   LogOut,
   ChevronRight,
   ChevronsUpDown,
@@ -206,6 +207,17 @@ export function AdminSidebar() {
               >
                 <Mail className="h-4 w-4" />
                 <span>Contact Messages</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Request logs"
+                isActive={isPathActive(`${BASE}/logs`)}
+                render={<NavLink to={`${BASE}/logs`} />}
+              >
+                <ScrollText className="h-4 w-4" />
+                <span>Request Logs</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

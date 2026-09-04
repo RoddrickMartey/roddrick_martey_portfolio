@@ -6,6 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
 import { ResourceLoader } from "@/components/resource-loader"
@@ -201,7 +206,16 @@ function AdminTechnology() {
                     key={item.id}
                     className="flex items-center gap-2 border border-border px-3 py-2"
                   >
-                    <span className="text-sm font-medium">{item.name}</span>
+                    <HoverCard>
+                      <HoverCardTrigger className="max-w-56 cursor-help truncate text-left text-sm font-medium">
+                        {item.name}
+                      </HoverCardTrigger>
+                      {item.description && (
+                        <HoverCardContent className="w-72 whitespace-normal">
+                          {item.description}
+                        </HoverCardContent>
+                      )}
+                    </HoverCard>
                     <Button
                       type="button"
                       variant="outline"

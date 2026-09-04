@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { format } from "date-fns"
 import { Pencil, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -313,7 +314,10 @@ function AdminExperience() {
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    {experience.startDate} - {experience.endDate ?? "Present"}
+                    {format(new Date(experience.startDate), "MMM yyyy")} -{" "}
+                    {experience.endDate
+                      ? format(new Date(experience.endDate), "MMM yyyy")
+                      : "Present"}
                     {experience.location ? ` • ${experience.location}` : ""}
                   </div>
 

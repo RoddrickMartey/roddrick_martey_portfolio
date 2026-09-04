@@ -133,35 +133,27 @@
   }
 }
 
-@layer utilities {
-  /* Webkit browsers (Chrome, Safari, Edge) */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--muted);
+}
 
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--muted) / 0.5);
-    border-radius: 0px; /* Sharp rectangle corners */
-  }
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
 
-  ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 0px; /* Sharp rectangle corners */
-    border: 1px solid hsl(var(--border));
-  }
+*::-webkit-scrollbar-track {
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.6);
-  }
+*::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border: 0;
+  border-radius: 0;
+}
 
-  ::-webkit-scrollbar-corner {
-    background: hsl(var(--muted) / 0.5);
-  }
-
-  /* Firefox support */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--muted) / 0.5);
-  }
+*::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklch, var(--primary) 90%, transparent);
 }
