@@ -16,7 +16,7 @@ import { ImageOff, ExternalLink, Pencil } from "lucide-react"
 import { GithubLogoIcon } from "@phosphor-icons/react"
 
 type Props = {
-  project: Project
+  project: Partial<Project>
 }
 
 function ProjectItem({ project }: Props) {
@@ -53,8 +53,7 @@ function ProjectItem({ project }: Props) {
           {project.summary}
         </CardDescription>
       </CardHeader>
-
-      {project.techStack.length > 0 && (
+      {project.techStack && project.techStack.length > 0 && (
         <CardContent className="flex flex-wrap gap-1.5">
           {project.techStack.slice(0, 4).map(({ tech }) => (
             <Badge key={tech.id} variant="outline" className="text-xs">

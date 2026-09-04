@@ -17,6 +17,7 @@ import AdminTechnology from "./pages/Admin/AdminTechnology"
 import AdminMessages from "./pages/Admin/AdminMessages"
 import AdminLogs from "./pages/Admin/AdminLogs"
 import MainPage from "./pages/Portfolio/MainPage"
+import Projects from "./pages/Portfolio/Projects"
 import MainLayout from "./pages/Portfolio/layout/MainLayout"
 
 export function App() {
@@ -24,6 +25,7 @@ export function App() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<MainPage />} />
+        <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:slug" element={<ProjectView />} />
       </Route>
       <Route path="/007/admin/login" element={<AdminLogin />} />

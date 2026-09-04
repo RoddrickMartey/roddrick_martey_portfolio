@@ -1,4 +1,5 @@
 import { api } from "@/lib/axios"
+import type { Project, ProjectTechnology } from "@/types/project"
 
 export type PublicHomeProfile = {
   fullName: string
@@ -12,20 +13,19 @@ export type PublicHomeProfile = {
   openToWork: boolean
 }
 
-export type PublicProjectTechnology = {
-  tech: {
-    name: string
-  }
-}
-
-export type PublicHomeProject = {
-  title: string
-  slug: string
-  summary: string
-  imageUrl: string | null
-  liveUrl: string | null
-  githubUrl: string | null
-  techStack: PublicProjectTechnology[]
+export type PublicHomeProject = Pick<
+  Project,
+  | "id"
+  | "title"
+  | "slug"
+  | "summary"
+  | "imageUrl"
+  | "liveUrl"
+  | "githubUrl"
+  | "featured"
+  | "published"
+> & {
+  techStack: ProjectTechnology[]
 }
 
 export type PublicSkill = {
@@ -45,13 +45,7 @@ export type PublicProject = PublicHomeProject & {
   challenge: string | null
   outcome: string | null
   featured: boolean
-  techStack: Array<{
-    description: string | null
-    tech: {
-      name: string
-      description: string | null
-    }
-  }>
+  techStack: ProjectTechnology[]
 }
 
 export type PublicAboutProfile = PublicHomeProfile & {

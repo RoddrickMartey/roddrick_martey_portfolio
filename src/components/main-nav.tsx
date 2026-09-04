@@ -76,7 +76,7 @@ function MainNav() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? "Close menu" : "Open menu"}
-        className="fixed top-5 left-5 z-50 flex h-16 w-16 items-center justify-center rounded-none border border-border bg-card text-foreground shadow-lg shadow-black/5 transition-transform duration-200 hover:scale-105 active:scale-95"
+        className="fixed top-2 left-2 z-50 flex h-16 w-16 items-center justify-center rounded-none border border-border bg-card text-foreground shadow-lg shadow-black/5 transition-transform duration-200 hover:scale-105 active:scale-95"
       >
         <span className="relative flex h-7 w-7 items-center justify-center">
           <Menu
