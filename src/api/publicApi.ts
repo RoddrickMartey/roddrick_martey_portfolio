@@ -51,6 +51,7 @@ export type PublicProject = PublicHomeProject & {
 export type PublicAboutProfile = PublicHomeProfile & {
   nationality: string | null
   email: string
+  phone: string | null
   resumeUrl: string | null
 }
 
@@ -99,7 +100,7 @@ export type PublicAboutResponse = {
 
 export type PublicContactResponse = {
   email: string
-  phone?: never
+  phone: string | null
   linkedinUrl: string | null
   githubUrl: string | null
   location: string | null

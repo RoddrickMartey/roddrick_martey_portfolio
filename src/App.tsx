@@ -18,6 +18,8 @@ import AdminMessages from "./pages/Admin/AdminMessages"
 import AdminLogs from "./pages/Admin/AdminLogs"
 import MainPage from "./pages/Portfolio/MainPage"
 import Projects from "./pages/Portfolio/Projects"
+import About from "./pages/Portfolio/About"
+import Contact from "./pages/Portfolio/Contact"
 import MainLayout from "./pages/Portfolio/layout/MainLayout"
 
 export function App() {
@@ -27,6 +29,8 @@ export function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:slug" element={<ProjectView />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="/007/admin/login" element={<AdminLogin />} />
       <Route element={<ProtectAdmin />}>

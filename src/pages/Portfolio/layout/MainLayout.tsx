@@ -1,9 +1,16 @@
-import { Outlet } from "react-router-dom"
+import { useEffect } from "react"
+import { Outlet, useLocation } from "react-router-dom"
 import MainNav from "@/components/main-nav"
 
 function MainLayout() {
+  const { pathname, search } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" })
+  }, [pathname, search])
+
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen w-full">
       <MainNav />
       <Outlet />
     </main>

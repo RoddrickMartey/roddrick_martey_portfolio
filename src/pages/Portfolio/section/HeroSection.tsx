@@ -1,7 +1,6 @@
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Globe, MapPin, User } from "lucide-react"
+import { CheckCircle2, Globe, MapPin, User } from "lucide-react"
 import { GithubLogoIcon, LinkedinLogoIcon } from "@phosphor-icons/react"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
@@ -49,13 +48,20 @@ function HeroSection({ data, isLoading, error, refetch }: HeroSectionProps) {
             {/* Content */}
             <div className="order-2 flex max-w-2xl flex-col items-center text-center lg:order-1 lg:items-start lg:text-left">
               {data?.openToWork && (
-                <Badge
-                  variant="outline"
-                  className="mb-6 gap-1.5 border-emerald-600/30 bg-emerald-600/10 px-3 py-1 text-emerald-700 dark:text-emerald-400"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Open to work
-                </Badge>
+                <div className="mb-6 inline-flex items-center gap-3 border border-emerald-600/25 bg-emerald-600/8 px-3 py-2 text-left text-emerald-800 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-300">
+                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15">
+                    <span className="absolute h-2.5 w-2.5 animate-ping rounded-full bg-emerald-500/40" />
+                    <CheckCircle2 className="relative h-4 w-4" />
+                  </span>
+                  <span>
+                    <span className="block text-[11px] font-semibold tracking-[0.14em] uppercase">
+                      Available for work
+                    </span>
+                    <span className="mt-0.5 block text-xs text-emerald-700/75 dark:text-emerald-300/75">
+                      Open to thoughtful opportunities
+                    </span>
+                  </span>
+                </div>
               )}
 
               <div className="space-y-3">
@@ -139,20 +145,20 @@ function HeroSection({ data, isLoading, error, refetch }: HeroSectionProps) {
             <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
               {data?.avatarUrl ? (
                 <div className="relative">
-                  {/* Background glow / shape */}
-                  <div className="[border-radius:22% 78% 23% 77% / 77% 28% 72% 23% ] absolute -inset-6 bg-muted/60 blur-3xl" />
+                  {/* Background glow shape */}
+                  <div className="absolute -inset-4 rounded-[22%_78%_23%_77%/_77%_28%_72%_23%] bg-muted/60 blur-3xl" />
 
-                  {/* Border */}
-                  <div className="[border-radius:22% 78% 23% 77% / 77% 28% 72% 23% ] relative overflow-hidden border border-border bg-background p-1 shadow-2xl">
+                  {/* Main Image Wrapper with Warped Border */}
+                  <div className="relative overflow-hidden rounded-[22%_78%_23%_77%/_77%_28%_72%_23%] border border-border bg-background p-1.5 shadow-2xl">
                     <img
                       src={data.avatarUrl}
                       alt={data.fullName || "Profile photo"}
-                      className="[border-radius:22% 78% 23% 77% / 77% 28% 72% 23% ] h-[360px] w-[320px] object-cover sm:h-[460px] sm:w-[400px] lg:h-[560px] lg:w-[470px]"
+                      className="h-[360px] w-[320px] rounded-[20%_78%_20%_78%/_78%_20%_78%_20%] object-cover sm:h-[460px] sm:w-[400px] lg:h-[560px] lg:w-[470px]"
                     />
                   </div>
                 </div>
               ) : (
-                <div className="[border-radius:22% 78% 23% 77% / 77% 28% 72% 23% ] flex h-[360px] w-[320px] items-center justify-center bg-muted sm:h-[460px] sm:w-[400px] lg:h-[560px] lg:w-[470px]">
+                <div className="flex h-[360px] w-[320px] items-center justify-center rounded-[22%_78%_23%_77%/_77%_28%_72%_23%] border border-border bg-muted shadow-xl sm:h-[460px] sm:w-[400px] lg:h-[560px] lg:w-[470px]">
                   <User className="h-20 w-20 text-muted-foreground/40" />
                 </div>
               )}
