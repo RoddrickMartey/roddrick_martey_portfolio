@@ -114,7 +114,7 @@ function AdminHome() {
 
   return (
     <section className="min-h-screen w-full space-y-6 p-3">
-      <div className="overflow-hidden rounded-2xl border border-border/80 bg-linear-to-br from-primary/10 via-background to-background shadow-sm">
+      <div className="overflow-hidden border border-border/80 bg-linear-to-br from-primary/10 via-background to-background shadow-sm">
         <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between md:p-6">
           <div>
             <div className="mb-2 flex items-center gap-2 text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
