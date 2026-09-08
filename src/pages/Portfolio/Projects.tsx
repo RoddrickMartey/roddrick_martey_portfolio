@@ -39,7 +39,7 @@ function Projects() {
   return (
     <section className="min-h-screen w-full px-6 py-28 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <header className="mb-12 max-w-2xl">
+        <header className="mb-12 max-w-2xl animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
           <p className="mb-3 text-sm font-medium tracking-[0.18em] text-primary uppercase">
             Portfolio
           </p>
@@ -58,7 +58,7 @@ function Projects() {
             icon={<FolderOpen className="h-6 w-6" />}
           />
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid animate-in gap-6 delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => (
               <ProjectItem key={project.id} project={project} />
             ))}

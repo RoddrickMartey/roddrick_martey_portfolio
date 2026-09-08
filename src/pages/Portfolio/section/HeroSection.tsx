@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { CheckCircle2, Globe, MapPin, User } from "lucide-react"
+import { Globe, MapPin, User } from "lucide-react"
 import { GithubLogoIcon, LinkedinLogoIcon } from "@phosphor-icons/react"
 import { EmptyResource } from "@/components/empty-component"
 import { ResourceError } from "@/components/resource-error"
@@ -39,28 +39,30 @@ function HeroSection({ data, isLoading, error, refetch }: HeroSectionProps) {
   }
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden">
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl items-center px-6 py-10 sm:px-8 lg:px-12">
+    <section
+      className="relative min-h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage:
+          "url('https://res.cloudinary.com/dtehqyxpu/image/upload/v1788810007/bg_qypdbs.png')",
+      }}
+    >
+      {/* Overlay to keep foreground content legible over the wallpaper */}
+      <div className="absolute inset-0 bg-background/50 dark:bg-background/85" />
+
+      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl items-center px-6 py-10 sm:px-8 lg:px-12">
         {isLoading ? (
           <HeroSkeleton />
         ) : (
           <div className="grid w-full grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
             {/* Content */}
-            <div className="order-2 flex max-w-2xl flex-col items-center text-center lg:order-1 lg:items-start lg:text-left">
+            <div className="order-2 flex max-w-2xl animate-in flex-col items-center text-center duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none lg:order-1 lg:items-start lg:text-left lg:slide-in-from-left-8">
               {data?.openToWork && (
-                <div className="mb-6 inline-flex items-center gap-3 border border-emerald-600/25 bg-emerald-600/8 px-3 py-2 text-left text-emerald-800 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-300">
-                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15">
-                    <span className="absolute h-2.5 w-2.5 animate-ping rounded-full bg-emerald-500/40" />
-                    <CheckCircle2 className="relative h-4 w-4" />
-                  </span>
-                  <span>
-                    <span className="block text-[11px] font-semibold tracking-[0.14em] uppercase">
-                      Available for work
-                    </span>
-                    <span className="mt-0.5 block text-xs text-emerald-700/75 dark:text-emerald-300/75">
-                      Open to thoughtful opportunities
-                    </span>
-                  </span>
+                <div className="mb-5 inline-flex items-center gap-2.5 rounded-full bg-muted/60 px-3.5 py-1.5 text-sm text-foreground">
+                  <span
+                    className="h-2 w-2 shrink-0 rounded-full bg-foreground/70"
+                    style={{ boxShadow: "0 0 0 3px oklch(1 0 0 / 0.5)" }}
+                  />
+                  <span>Open to new opportunities</span>
                 </div>
               )}
 
@@ -142,13 +144,22 @@ function HeroSection({ data, isLoading, error, refetch }: HeroSectionProps) {
             </div>
 
             {/* Large Profile Image */}
-            <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
+            <div className="order-1 flex animate-in justify-center delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none lg:order-2 lg:justify-end lg:slide-in-from-right-8">
               {data?.avatarUrl ? (
                 <div className="relative">
-                  {/* Background glow shape */}
-                  <div className="absolute -inset-4 rounded-[22%_78%_23%_77%/_77%_28%_72%_23%] bg-muted/60 blur-3xl" />
+                  {/* Ambient glow */}
+                  <div className="absolute -inset-6 rounded-[22%_78%_23%_77%/_77%_28%_72%_23%] bg-muted/60 blur-3xl" />
 
-                  {/* Main Image Wrapper with Warped Border */}
+                  {/* Slow-rotating accent halo */}
+                  <div
+                    className="absolute -inset-3 rounded-[26%_74%_27%_73%/_73%_32%_68%_27%] opacity-70 motion-safe:animate-[spin_26s_linear_infinite] motion-reduce:animate-none"
+                    style={{
+                      background:
+                        "conic-gradient(from 90deg, transparent 0%, oklch(0.92 0.03 65 / 0.55) 16%, transparent 38%, transparent 62%, oklch(0.3 0.04 50 / 0.5) 84%, transparent 100%)",
+                    }}
+                  />
+
+                  {/* Portrait */}
                   <div className="relative overflow-hidden rounded-[22%_78%_23%_77%/_77%_28%_72%_23%] border border-border bg-background p-1.5 shadow-2xl">
                     <img
                       src={data.avatarUrl}

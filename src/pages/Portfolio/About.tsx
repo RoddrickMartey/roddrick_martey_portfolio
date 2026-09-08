@@ -91,10 +91,20 @@ function About() {
   const resumeDownloadUrl = `${import.meta.env.VITE_API_BASE_URL}/public/resume/download`
 
   return (
-    <main className="min-h-screen w-full px-6 py-28 sm:px-8 lg:px-12">
+    <main className="relative min-h-screen w-full overflow-hidden px-6 py-28 sm:px-8 lg:px-12">
+      {/* Background Layer: Covers top hero area, blurred, with soft fade out at the bottom */}
+      <div
+        aria-hidden="true"
+        className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
+        style={{
+          backgroundImage:
+            "url('https://res.cloudinary.com/dtehqyxpu/image/upload/v1788823196/ee8fffdb969d0ef7e2cb8770bd174b6d_suyn98.png')",
+        }}
+      />
+
       <div className="mx-auto max-w-7xl space-y-24">
         <header className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
-          <div>
+          <div className="animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
             <p className="mb-3 text-sm font-medium tracking-[0.18em] text-primary uppercase">
               About me
             </p>
@@ -102,7 +112,7 @@ function About() {
               The person behind the work.
             </h1>
           </div>
-          <div className="max-w-2xl lg:justify-self-end">
+          <div className="max-w-2xl animate-in delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none lg:justify-self-end">
             <p className="text-xl leading-8 text-muted-foreground">
               {data.profile.summary}
             </p>
@@ -125,7 +135,7 @@ function About() {
             {data.profile.resumeUrl && (
               <a
                 href={resumeDownloadUrl}
-                className="mt-6 inline-flex items-center border border-border px-3 py-2 text-sm font-medium transition-colors hover:border-primary hover:bg-muted"
+                className="mt-6 inline-flex items-center border border-border bg-secondary px-3 py-2 text-sm font-medium transition-colors hover:border-primary hover:bg-muted"
               >
                 <Download className="mr-2 h-4 w-4" />
                 Download resume
@@ -158,7 +168,7 @@ function About() {
         </section>
 
         <section className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
-          <div>
+          <div className="animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
             <p className="text-sm font-medium tracking-[0.18em] text-primary uppercase">
               Experience & education
             </p>
@@ -166,7 +176,7 @@ function About() {
               A career built through practice.
             </h2>
           </div>
-          <div className="space-y-10">
+          <div className="animate-in space-y-10 delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none">
             {timelineItems.length === 0 ? (
               <p className="text-muted-foreground">
                 No timeline entries published yet.
@@ -223,7 +233,7 @@ function About() {
         </section>
 
         <section className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
-          <div>
+          <div className="animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
             <p className="text-sm font-medium tracking-[0.18em] text-primary uppercase">
               Skills
             </p>
@@ -231,9 +241,12 @@ function About() {
               What I bring to a team.
             </h2>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid animate-in gap-6 delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none sm:grid-cols-2">
             {data.skillCategories.map((category) => (
-              <article key={category.name} className="border border-border p-5">
+              <article
+                key={category.name}
+                className="border border-border bg-background/80 p-5 backdrop-blur-xs"
+              >
                 <h3 className="font-semibold">{category.name}</h3>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {category.skills.map((skill) => {
@@ -246,7 +259,7 @@ function About() {
         </section>
 
         <section className="grid gap-10 border-t border-border pt-10 lg:grid-cols-[0.7fr_1.3fr]">
-          <div>
+          <div className="animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
             <p className="text-sm font-medium tracking-[0.18em] text-primary uppercase">
               Credentials
             </p>
@@ -254,11 +267,11 @@ function About() {
               Selected certifications.
             </h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid animate-in gap-4 delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none sm:grid-cols-2">
             {data.certifications.map((item) => (
               <article
                 key={`${item.name}-${item.issuer}`}
-                className="border border-border p-5"
+                className="border border-border bg-background/80 p-5 backdrop-blur-xs"
               >
                 <Award className="h-5 w-5 text-primary" />
                 <h3 className="mt-4 font-semibold">{item.name}</h3>

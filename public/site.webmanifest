@@ -1,0 +1,22 @@
+{
+  "name": "Roddrick Martey Anum | Portfolio",
+  "short_name": "Roddrick Anum",
+  "description": "Roddrick Martey Anum's portfolio of thoughtful digital work.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f6f5f0",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/dtehqyxpu/image/upload/f_auto,q_auto,w_192/v1788820639/f3b9f0e2cb898a1d69d54494f42137cd_h2iec4.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://res.cloudinary.com/dtehqyxpu/image/upload/f_auto,q_auto,w_512/v1788820639/f3b9f0e2cb898a1d69d54494f42137cd_h2iec4.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

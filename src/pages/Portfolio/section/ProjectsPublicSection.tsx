@@ -38,7 +38,7 @@ function ProjectsPublicSection({
     <section className="w-full border-t border-border px-6 py-24 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
+          <div className="animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
             <p className="mb-2 text-sm font-medium tracking-[0.18em] text-primary uppercase">
               Selected work
             </p>
@@ -48,7 +48,7 @@ function ProjectsPublicSection({
           </div>
           <Link
             to="/projects"
-            className="inline-flex h-8 items-center justify-center border border-border bg-background px-2.5 text-xs font-medium transition-colors hover:bg-muted"
+            className="inline-flex h-8 animate-in items-center justify-center border border-border bg-background px-2.5 text-xs font-medium transition-colors delay-150 duration-700 fade-in slide-in-from-right-8 hover:bg-muted motion-reduce:animate-none"
           >
             View all projects
             <ArrowUpRight className="ml-2 h-4 w-4" />
@@ -56,7 +56,7 @@ function ProjectsPublicSection({
         </div>
 
         {isLoading ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid animate-in gap-6 delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none md:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2].map((item) => (
               <div key={item} className="space-y-4 border border-border p-4">
                 <Skeleton className="aspect-16/10 w-full" />

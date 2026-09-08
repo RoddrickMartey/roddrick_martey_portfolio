@@ -112,9 +112,19 @@ function Contact() {
   )
 
   return (
-    <main className="min-h-screen w-full px-6 py-28 sm:px-8 lg:px-12">
+    <main className="relative min-h-screen w-full overflow-hidden px-6 py-28 sm:px-8 lg:px-12">
+      {/* Background Layer: Top section header overlay with light blur and gradient fade */}
+      <div
+        aria-hidden="true"
+        className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
+        style={{
+          backgroundImage:
+            "url('https://res.cloudinary.com/dtehqyxpu/image/upload/v1788824576/45045ecdd11da3a63c601c120a738a25_zm0yp6.png')",
+        }}
+      />
+
       <div className="mx-auto max-w-7xl">
-        <header className="max-w-3xl">
+        <header className="max-w-3xl animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
           <p className="mb-3 text-sm font-medium tracking-[0.18em] text-primary uppercase">
             Contact
           </p>
@@ -128,7 +138,7 @@ function Contact() {
         </header>
 
         <div className="mt-16 grid gap-12 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
-          <aside className="space-y-8">
+          <aside className="animate-in space-y-8 duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
             <div>
               <p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
                 Reach me
@@ -186,7 +196,7 @@ function Contact() {
 
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 border border-border bg-card p-6 sm:p-8"
+            className="animate-in space-y-6 border border-border bg-card/90 p-6 backdrop-blur-xs delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none sm:p-8"
             noValidate
           >
             <div className="grid gap-6 sm:grid-cols-2">

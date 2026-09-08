@@ -91,7 +91,7 @@ function ProjectView() {
     <section className="min-h-screen w-full">
       <article className="mx-auto min-h-screen w-full max-w-5xl space-y-8 p-4 sm:p-6">
         {/* Navigation & Action Bar */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex animate-in items-center justify-between gap-4 duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
           <Button
             variant="ghost"
             size="sm"
@@ -151,7 +151,7 @@ function ProjectView() {
         </div>
 
         {/* Header Info */}
-        <div className="space-y-4">
+        <div className="animate-in space-y-4 delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none">
           <div className="flex flex-wrap items-center gap-2">
             {project.featured && <Badge variant="default">Featured</Badge>}
             <Badge variant={project.published ? "secondary" : "destructive"}>
@@ -173,7 +173,7 @@ function ProjectView() {
 
         {/* Cover Image */}
         {project.imageUrl && (
-          <div className="overflow-hidden border bg-muted">
+          <div className="animate-in overflow-hidden border bg-muted delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none">
             <img
               src={project.imageUrl}
               alt={`${project.title} preview`}
@@ -184,7 +184,7 @@ function ProjectView() {
 
         {/* Tech Stack List */}
         {project.techStack.length > 0 && (
-          <Card>
+          <Card className="animate-in duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Layers className="h-5 w-5 text-primary" />
@@ -215,7 +215,7 @@ function ProjectView() {
           project.approach ||
           project.challenge ||
           project.outcome) && (
-          <div className="space-y-6">
+          <div className="animate-in space-y-6 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none">
             <Separator />
             <h2 className="text-2xl font-semibold tracking-tight">
               Case Study Breakdown
