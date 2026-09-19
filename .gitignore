@@ -29,3 +29,6 @@ coverage
 .env
 .env.*
 !.env.example
+
+# Local frontend documentation summary
+FRONTEND_PORTFOLIO_SUMMARY.txt
