@@ -14,6 +14,7 @@ import {
   type PublicContactFormValues,
 } from "@/schema/publicContactSchema"
 import { usePublicContact, useSubmitPublicContact } from "@/hooks/usePublic"
+import { ArrowUpRight } from "lucide-react"
 
 const emptyValues: PublicContactFormValues = {
   name: "",
@@ -60,11 +61,11 @@ function Contact() {
     })
   }
 
-  if (isLoading) {
+  if (isLoading && !contact) {
     return <ResourceLoader message="Fetching contact details" fullScreen />
   }
 
-  if (isError) {
+  if (isError && !contact) {
     return (
       <section className="flex min-h-screen w-full items-center justify-center p-6">
         <ResourceError
@@ -116,7 +117,7 @@ function Contact() {
       {/* Background Layer: Top section header overlay with light blur and gradient fade */}
       <div
         aria-hidden="true"
-        className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
+        className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 -top-5 -left-10 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
         style={{
           backgroundImage:
             "url('https://res.cloudinary.com/dtehqyxpu/image/upload/v1788824576/45045ecdd11da3a63c601c120a738a25_zm0yp6.png')",
@@ -143,17 +144,21 @@ function Contact() {
               <p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
                 Reach me
               </p>
-              <div className="mt-5 space-y-4">
+              <div className="mt-5 space-y-5">
                 {contactItems.map((item) => {
                   const Icon = item.icon
                   const content = (
-                    <div className="flex items-start gap-3">
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      <div>
+                    <div className="flex items-start gap-4">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-secondary text-primary transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground motion-reduce:transition-none">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <div className="min-w-0 pt-0.5">
                         <p className="text-xs text-muted-foreground">
                           {item.label}
                         </p>
-                        <p className="mt-1 text-sm font-medium">{item.value}</p>
+                        <p className="mt-0.5 text-sm font-medium wrap-break-word">
+                          {item.value}
+                        </p>
                       </div>
                     </div>
                   )
@@ -161,7 +166,7 @@ function Contact() {
                     <a
                       key={item.label}
                       href={item.href}
-                      className="block hover:text-primary"
+                      className="group block rounded-md hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
                     >
                       {content}
                     </a>
@@ -184,9 +189,9 @@ function Contact() {
                       href={item.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm font-medium text-primary hover:underline"
+                      className="flex items-center text-sm font-medium text-secondary-foreground hover:text-primary hover:underline"
                     >
-                      {item.label}
+                      {item.label} <ArrowUpRight size={16} />
                     </a>
                   ))}
                 </div>

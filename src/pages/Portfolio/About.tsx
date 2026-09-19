@@ -24,11 +24,11 @@ function About() {
   const { data, isLoading, isError, error, refetch, isRefetching } =
     usePublicAbout()
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <ResourceLoader message="Fetching profile" fullScreen />
   }
 
-  if (isError) {
+  if (isError && !data) {
     return (
       <section className="flex min-h-screen w-full items-center justify-center p-6">
         <ResourceError
@@ -95,7 +95,7 @@ function About() {
       {/* Background Layer: Covers top hero area, blurred, with soft fade out at the bottom */}
       <div
         aria-hidden="true"
-        className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
+        className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 -top-20 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
         style={{
           backgroundImage:
             "url('https://res.cloudinary.com/dtehqyxpu/image/upload/v1788823196/ee8fffdb969d0ef7e2cb8770bd174b6d_suyn98.png')",
@@ -176,58 +176,65 @@ function About() {
               A career built through practice.
             </h2>
           </div>
-          <div className="animate-in space-y-10 delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none">
+
+          <div className="animate-in delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none">
             {timelineItems.length === 0 ? (
               <p className="text-muted-foreground">
                 No timeline entries published yet.
               </p>
             ) : (
-              timelineItems.map((item, index) => {
-                const Icon = item.icon
-                return (
-                  <article
-                    key={`${item.kind}-${item.title}-${index}`}
-                    className="relative border-l border-border pl-8"
-                  >
-                    <div className="absolute top-0 -left-4 flex h-8 w-8 items-center justify-center border border-border bg-background text-primary">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
-                      <div>
-                        <p className="text-xs font-medium tracking-[0.14em] text-primary uppercase">
-                          {item.kind}
-                        </p>
-                        <h3 className="mt-2 text-xl font-semibold">
-                          {item.title}
-                        </h3>
-                        <p className="text-muted-foreground">
-                          {item.organization}
-                        </p>
+              /* The continuous timeline line lives here */
+              <div className="ml-4 space-y-8 border-l border-border pl-8">
+                {timelineItems.map((item, index) => {
+                  const Icon = item.icon
+                  return (
+                    <article
+                      key={`${item.kind}-${item.title}-${index}`}
+                      className="relative border border-border bg-background/80 p-5 shadow-sm backdrop-blur-xs"
+                    >
+                      {/* Marker: centred on the line (-3rem = pl-8 + half of w-8) */}
+                      <div className="absolute top-5 -left-12 z-10 flex h-8 w-8 items-center justify-center border border-border bg-background text-primary">
+                        <Icon className="h-4 w-4" />
                       </div>
-                      <time className="text-sm text-muted-foreground">
-                        {item.dates}
-                      </time>
-                    </div>
-                    {item.details && (
-                      <p className="mt-3 text-sm text-muted-foreground">
-                        {item.details}
-                      </p>
-                    )}
-                    {item.description && (
-                      <p className="mt-4 leading-7 text-muted-foreground">
-                        {item.description}
-                      </p>
-                    )}
-                    {item.bullets.length > 0 && (
-                      <ul className="mt-4 space-y-2 text-sm leading-6 text-muted-foreground">
-                        {item.bullets.map((bullet) => (
-                          <li key={bullet}>• {bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </article>
-                )
-              })
+
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                        <div>
+                          <p className="text-xs font-medium tracking-[0.14em] text-primary uppercase">
+                            {item.kind}
+                          </p>
+                          <h3 className="mt-2 text-xl font-semibold">
+                            {item.title}
+                          </h3>
+                          <p className="text-muted-foreground">
+                            {item.organization}
+                          </p>
+                        </div>
+                        <time className="text-sm text-muted-foreground">
+                          {item.dates}
+                        </time>
+                      </div>
+
+                      {item.details && (
+                        <p className="mt-3 text-sm text-muted-foreground">
+                          {item.details}
+                        </p>
+                      )}
+                      {item.description && (
+                        <p className="mt-4 leading-7 text-muted-foreground">
+                          {item.description}
+                        </p>
+                      )}
+                      {item.bullets.length > 0 && (
+                        <ul className="mt-4 space-y-2 text-sm leading-6 text-muted-foreground">
+                          {item.bullets.map((bullet) => (
+                            <li key={bullet}>• {bullet}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </article>
+                  )
+                })}
+              </div>
             )}
           </div>
         </section>

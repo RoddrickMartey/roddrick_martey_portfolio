@@ -9,7 +9,7 @@ function AdminLayout() {
       <div className="fixed top-3 left-3 z-50 md:hidden">
         <SidebarTrigger className="border border-border bg-background/90 shadow-sm backdrop-blur-sm" />
       </div>
-      <main className="min-h-screen w-full bg-background pt-14 md:pt-0">
+      <main className="min-h-screen min-w-0 flex-1 bg-background pt-14 md:pt-0">
         <Outlet />
       </main>
     </SidebarProvider>

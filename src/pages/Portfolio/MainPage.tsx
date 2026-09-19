@@ -5,24 +5,25 @@ import SkillsPublicSection from "./section/SkillsPublicSection"
 
 function MainPage() {
   const { data, isLoading, error, refetch } = usePublicHome()
+  const isInitialLoading = isLoading && !data
 
   return (
     <main className="min-h-screen w-full items-center">
       <HeroSection
         data={data?.profile || null}
-        isLoading={isLoading}
+        isLoading={isInitialLoading}
         error={error}
         refetch={refetch}
       />
       <ProjectsPublicSection
         projects={data?.projects || []}
-        isLoading={isLoading}
+        isLoading={isInitialLoading}
         error={error}
         refetch={refetch}
       />
       <SkillsPublicSection
         skillCategories={data?.skills || []}
-        isLoading={isLoading}
+        isLoading={isInitialLoading}
         error={error}
         refetch={refetch}
       />

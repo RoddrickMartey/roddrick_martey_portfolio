@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Menu, X, Home, FolderGit2, User, Mail, Moon, Sun } from "lucide-react"
+import {
+  Menu,
+  X,
+  Home,
+  FolderGit2,
+  User,
+  Mail,
+  Moon,
+  Sun,
+  ArrowUpRight,
+} from "lucide-react"
 
 type NavItem = {
   label: string
@@ -25,25 +35,6 @@ function MainNav() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // Close on outside click
-  useEffect(() => {
-    if (!open) return
-
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as Node
-      if (
-        panelRef.current?.contains(target) ||
-        triggerRef.current?.contains(target)
-      ) {
-        return
-      }
-      setOpen(false)
-    }
-
-    document.addEventListener("mousedown", handleClick)
-    return () => document.removeEventListener("mousedown", handleClick)
-  }, [open])
-
   // Close on Escape
   useEffect(() => {
     if (!open) return
@@ -54,6 +45,18 @@ function MainNav() {
 
     document.addEventListener("keydown", handleKey)
     return () => document.removeEventListener("keydown", handleKey)
+  }, [open])
+
+  // Prevent background scrolling when menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
   }, [open])
 
   const handleNavigate = (path: string) => {
@@ -69,85 +72,116 @@ function MainNav() {
 
   return (
     <>
-      {/* Trigger */}
+      {/* Trigger - Kept at h-16 w-16 as requested */}
       <button
         ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? "Close menu" : "Open menu"}
-        className="fixed top-2 left-2 z-50 flex h-16 w-16 items-center justify-center rounded-none border border-border bg-card text-foreground shadow-lg shadow-black/5 transition-transform duration-200 hover:scale-105 active:scale-95"
+        className="fixed top-6 left-6 z-50 flex h-16 w-16 items-center justify-center border border-border bg-card text-foreground shadow-xl transition-all duration-300 hover:border-primary active:scale-95"
       >
         <span className="relative flex h-7 w-7 items-center justify-center">
           <Menu
-            className={`absolute h-7 w-7 transition-all duration-200 ${
+            className={`absolute h-7 w-7 transition-all duration-300 ${
               open ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
             }`}
           />
           <X
-            className={`absolute h-7 w-7 text-primary transition-all duration-200 ${
+            className={`absolute h-7 w-7 text-primary transition-all duration-300 ${
               open ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"
             }`}
           />
         </span>
       </button>
 
-      {/* Backdrop */}
-      <div
-        aria-hidden="true"
-        onClick={() => setOpen(false)}
-        className={`fixed inset-0 z-40 bg-background/60 backdrop-blur-sm transition-opacity duration-200 ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      />
-
-      {/* Panel */}
+      {/* Full-Screen Drawer Navigation */}
       <div
         ref={panelRef}
         role="menu"
-        className={`fixed top-24 left-5 z-50 w-64 origin-top-left rounded-none border border-border bg-card p-2 shadow-xl shadow-black/10 transition-all duration-200 ${
+        className={`fixed inset-0 z-40 flex flex-col justify-between bg-background/95 p-8 backdrop-blur-md transition-all duration-500 ease-in-out sm:p-16 lg:p-24 ${
           open
-            ? "translate-y-0 scale-100 opacity-100"
-            : "pointer-events-none -translate-y-2 scale-95 opacity-0"
+            ? "pointer-events-auto translate-x-0 opacity-100"
+            : "pointer-events-none -translate-x-full opacity-0"
         }`}
       >
-        <nav className="flex flex-col gap-1">
-          {NAV_ITEMS.map(({ label, path, icon: Icon }) => {
-            const isActive = location.pathname === path
-            return (
-              <button
-                key={path}
-                type="button"
-                role="menuitem"
-                onClick={() => handleNavigate(path)}
-                className={`flex items-center gap-3 rounded-none px-3 py-2.5 text-left text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                <Icon className="h-4 w-4" aria-hidden="true" />
-                {label}
-              </button>
-            )
-          })}
-        </nav>
+        {/* Navigation Section */}
+        <div className="mx-auto flex h-full w-full max-w-6xl flex-col justify-center pt-10">
+          <p className="mb-8 text-xs font-semibold tracking-[0.2em] text-primary uppercase">
+            Navigation
+          </p>
+          <nav className="flex flex-col space-y-4 sm:space-y-6">
+            {NAV_ITEMS.map(({ label, path }, index) => {
+              const isActive = location.pathname === path
+              return (
+                <button
+                  key={path}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => handleNavigate(path)}
+                  style={{
+                    transitionDelay: `${open ? index * 75 + 100 : 0}ms`,
+                  }}
+                  className={`group flex items-center justify-between text-left transition-all duration-300 ${
+                    open
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-8 opacity-0"
+                  }`}
+                >
+                  <div className="flex items-center gap-6">
+                    <span
+                      className={`font-mono text-sm transition-colors duration-300 ${
+                        isActive
+                          ? "text-primary"
+                          : "text-muted-foreground group-hover:text-foreground"
+                      }`}
+                    >
+                      0{index + 1}
+                    </span>
+                    <span
+                      className={`text-4xl font-light tracking-tight transition-all duration-300 sm:text-6xl md:text-7xl ${
+                        isActive
+                          ? "translate-x-2 font-semibold text-primary"
+                          : "text-foreground hover:translate-x-3 hover:text-primary"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                  <ArrowUpRight
+                    className={`h-8 w-8 transition-all duration-300 ${
+                      isActive
+                        ? "translate-x-0 text-primary opacity-100"
+                        : "-translate-x-4 text-muted-foreground opacity-0 group-hover:translate-x-0 group-hover:text-primary group-hover:opacity-100"
+                    }`}
+                  />
+                </button>
+              )
+            })}
+          </nav>
+        </div>
 
-        <div className="my-2 h-px bg-border" />
+        {/* Footer Utilities */}
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between border-t border-border/60 pt-6">
+          <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+            AVAILABLE FOR WORK
+          </div>
 
-        <button
-          type="button"
-          role="menuitem"
-          onClick={toggleTheme}
-          className="flex w-full items-center gap-3 rounded-none px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          {isDark ? (
-            <Sun className="h-4 w-4" aria-hidden="true" />
-          ) : (
-            <Moon className="h-4 w-4" aria-hidden="true" />
-          )}
-          {isDark ? "Light mode" : "Dark mode"}
-        </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={toggleTheme}
+            className="flex items-center gap-3 border border-border bg-card px-5 py-3 text-xs font-medium tracking-wider text-foreground uppercase transition-colors hover:border-primary hover:bg-muted"
+          >
+            {isDark ? (
+              <Sun className="h-4 w-4 text-primary" aria-hidden="true" />
+            ) : (
+              <Moon className="h-4 w-4 text-primary" aria-hidden="true" />
+            )}
+            {isDark ? "Light Mode" : "Dark Mode"}
+          </button>
+        </div>
       </div>
     </>
   )

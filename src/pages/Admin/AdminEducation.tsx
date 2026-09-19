@@ -194,14 +194,14 @@ function AdminEducation() {
             ) : (
               education.map((item) => (
                 <div key={item.id} className="border border-border p-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
+                  <div className="flex flex-col items-start justify-between gap-3 sm:flex-row">
+                    <div className="min-w-0">
                       <p className="font-medium">{item.degree}</p>
                       <p className="text-sm text-muted-foreground">
                         {item.institution}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:shrink-0">
                       <Button
                         type="button"
                         variant="outline"

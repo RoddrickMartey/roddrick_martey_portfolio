@@ -5,6 +5,13 @@ import type { CreateProjectInput, ProjectInput } from "@/types/project"
 const PROJECTS_QUERY_KEY = ["projects"]
 const PROJECT_QUERY_KEY = (slug: string) => ["projects", slug]
 
+const publicProjectOptions = {
+  staleTime: 5 * 60 * 1000,
+  gcTime: 30 * 60 * 1000,
+  retry: 2,
+  refetchOnWindowFocus: false,
+}
+
 export function useProjects(featured?: boolean) {
   return useQuery({
     queryKey: [...PROJECTS_QUERY_KEY, { featured }],
@@ -21,6 +28,7 @@ export function useAdminProjects(featured?: boolean) {
 
 export function useProject(slug: string) {
   return useQuery({
+    ...publicProjectOptions,
     queryKey: PROJECT_QUERY_KEY(slug),
     queryFn: () => projectApi.getBySlug(slug),
     enabled: !!slug,

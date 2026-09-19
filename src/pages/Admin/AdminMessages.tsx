@@ -111,16 +111,16 @@ function AdminMessages() {
 
                   return (
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
+                      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+                        <div className="min-w-0">
                           <p className="text-lg font-semibold">
                             {message.name}
                           </p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm break-words text-muted-foreground">
                             {message.email}
                           </p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:shrink-0">
                           <Button
                             type="button"
                             variant="outline"

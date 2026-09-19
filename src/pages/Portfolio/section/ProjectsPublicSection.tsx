@@ -20,7 +20,9 @@ function ProjectsPublicSection({
   error,
   refetch,
 }: ProjectsPublicSectionProps) {
-  if (error) {
+  const shouldShowLoading = isLoading && projects.length === 0
+
+  if (error && projects.length === 0 && !isLoading) {
     return (
       <section className="w-full border-t border-border px-6 py-24 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
@@ -55,7 +57,7 @@ function ProjectsPublicSection({
           </Link>
         </div>
 
-        {isLoading ? (
+        {shouldShowLoading ? (
           <div className="grid animate-in gap-6 delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none md:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2].map((item) => (
               <div key={item} className="space-y-4 border border-border p-4">

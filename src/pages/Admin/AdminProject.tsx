@@ -54,7 +54,7 @@ function AdminProject() {
 
   return (
     <section className="min-h-screen w-full space-y-6 p-3">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
           <p className="text-sm text-muted-foreground">

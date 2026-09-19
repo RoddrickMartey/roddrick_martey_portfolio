@@ -15,11 +15,11 @@ function Projects() {
     isRefetching,
   } = usePublicProjects()
 
-  if (isLoading) {
+  if (isLoading && !projects) {
     return <ResourceLoader message="Fetching projects" fullScreen />
   }
 
-  if (isError) {
+  if (isError && !projects) {
     return (
       <section className="flex min-h-screen w-full items-center justify-center p-6">
         <ResourceError

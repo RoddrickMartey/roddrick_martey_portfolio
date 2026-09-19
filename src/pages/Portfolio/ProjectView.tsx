@@ -29,7 +29,6 @@ function ProjectView() {
   // Always call hooks unconditionally at the top level
   const {
     data: project,
-    isFetched,
     isLoading,
     isError,
     error,
@@ -48,12 +47,12 @@ function ProjectView() {
   }
 
   // 2. Initial Loading State
-  if (isLoading && !isFetched) {
+  if (isLoading && !project) {
     return <ResourceLoader message="Fetching project details..." fullScreen />
   }
 
   // 3. Fetch Error State
-  if (isError) {
+  if (isError && !project) {
     console.error("Error fetching project:", error)
     return (
       <ResourceError
@@ -91,7 +90,7 @@ function ProjectView() {
     <section className="min-h-screen w-full">
       <article className="mx-auto min-h-screen w-full max-w-5xl space-y-8 p-4 sm:p-6">
         {/* Navigation & Action Bar */}
-        <div className="flex animate-in items-center justify-between gap-4 duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
+        <div className="flex animate-in flex-wrap items-center justify-between gap-4 duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
           <Button
             variant="ghost"
             size="sm"
@@ -102,7 +101,7 @@ function ProjectView() {
             Back
           </Button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap justify-end gap-2 sm:w-auto">
             {project.liveUrl && (
               <Button
                 size="sm"

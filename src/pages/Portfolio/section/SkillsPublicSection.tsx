@@ -17,7 +17,9 @@ function SkillsPublicSection({
   error,
   refetch,
 }: SkillsPublicSectionProps) {
-  if (error) {
+  const shouldShowLoading = isLoading && skillCategories.length === 0
+
+  if (error && skillCategories.length === 0 && !isLoading) {
     return (
       <section className="w-full border-t border-border px-6 py-24 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
@@ -43,7 +45,7 @@ function SkillsPublicSection({
           </h2>
         </div>
 
-        {isLoading ? (
+        {shouldShowLoading ? (
           <div className="grid animate-in gap-px overflow-hidden border border-border bg-border delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none sm:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2, 3, 4, 5].map((item) => (
               <div key={item} className="space-y-3 bg-card p-5">
