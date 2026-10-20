@@ -10,34 +10,30 @@ import {
   UserRound,
 } from "lucide-react"
 import { Link } from "react-router-dom"
-import { EmptyResource } from "@/components/empty-component"
-import { ResourceError } from "@/components/resource-error"
-import { ResourceLoader } from "@/components/resource-loader"
+import { PublicEmpty } from "@/components/PublicEmpty"
+import { PublicError } from "@/components/PublicError"
+import { PublicLoader } from "@/components/PublicLoader"
 
 import { usePublicAbout } from "@/hooks/usePublic"
 
 import { SkillBadges } from "@/components/SkillBadges"
+import { optimizeImage } from "@/lib/optimizeImage"
 
 const formatMonthYear = (date: string) => format(new Date(date), "MMM yyyy")
 
 function About() {
-  const { data, isLoading, isError, error, refetch, isRefetching } =
-    usePublicAbout()
+  const { data, isLoading, isError, refetch, isRefetching } = usePublicAbout()
 
   if (isLoading && !data) {
-    return <ResourceLoader message="Fetching profile" fullScreen />
+    return <PublicLoader message="Putting the story together..." />
   }
 
   if (isError && !data) {
     return (
       <section className="flex min-h-screen w-full items-center justify-center p-6">
-        <ResourceError
-          title="Failed to load about page"
-          description={
-            error instanceof Error
-              ? error.message
-              : "Could not retrieve the professional profile right now."
-          }
+        <PublicError
+          title="The about page is taking a moment"
+          description="Profile details could not be loaded just now. Please try again."
           onRetry={refetch}
           isRetrying={isRefetching}
         />
@@ -48,8 +44,8 @@ function About() {
   if (!data) {
     return (
       <section className="flex min-h-screen w-full items-center justify-center p-6">
-        <EmptyResource
-          title="Profile unavailable"
+        <PublicEmpty
+          title="Profile coming soon"
           description="The professional profile has not been published yet."
           icon={<UserRound className="h-6 w-6" />}
         />
@@ -92,13 +88,17 @@ function About() {
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden px-6 py-28 sm:px-8 lg:px-12">
+      <title>{data.profile.fullName} | About</title>
+      <meta
+        name="description"
+        content={`${data.profile.fullName}: ${data.profile.summary}`}
+      />
       {/* Background Layer: Covers top hero area, blurred, with soft fade out at the bottom */}
       <div
         aria-hidden="true"
         className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 -top-20 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
         style={{
-          backgroundImage:
-            "url('https://res.cloudinary.com/dtehqyxpu/image/upload/v1788823196/ee8fffdb969d0ef7e2cb8770bd174b6d_suyn98.png')",
+          backgroundImage: `url('${optimizeImage("https://res.cloudinary.com/dtehqyxpu/image/upload/v1788823196/ee8fffdb969d0ef7e2cb8770bd174b6d_suyn98.png", { width: 1920 })}')`,
         }}
       />
 

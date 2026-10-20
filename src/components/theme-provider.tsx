@@ -13,6 +13,7 @@ type ThemeProviderProps = {
 
 type ThemeProviderState = {
   theme: Theme
+  resolvedTheme: ResolvedTheme
   setTheme: (theme: Theme) => void
 }
 
@@ -92,11 +93,15 @@ export function ThemeProvider({
 
     return defaultTheme
   })
+  const [resolvedTheme, setResolvedTheme] = React.useState<ResolvedTheme>(() =>
+    theme === "system" ? getSystemTheme() : theme
+  )
 
   const setTheme = React.useCallback(
     (nextTheme: Theme) => {
       localStorage.setItem(storageKey, nextTheme)
       setThemeState(nextTheme)
+      setResolvedTheme(nextTheme === "system" ? getSystemTheme() : nextTheme)
     },
     [storageKey]
   )
@@ -129,6 +134,7 @@ export function ThemeProvider({
 
     const mediaQuery = window.matchMedia(COLOR_SCHEME_QUERY)
     const handleChange = () => {
+      setResolvedTheme(getSystemTheme())
       applyTheme("system")
     }
 
@@ -170,6 +176,15 @@ export function ThemeProvider({
         localStorage.setItem(storageKey, nextTheme)
         return nextTheme
       })
+      setResolvedTheme(
+        theme === "system"
+          ? getSystemTheme() === "dark"
+            ? "light"
+            : "dark"
+          : theme === "dark"
+            ? "light"
+            : "dark"
+      )
     }
 
     window.addEventListener("keydown", handleKeyDown)
@@ -177,7 +192,7 @@ export function ThemeProvider({
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [storageKey])
+  }, [storageKey, theme])
 
   React.useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
@@ -191,10 +206,16 @@ export function ThemeProvider({
 
       if (isTheme(event.newValue)) {
         setThemeState(event.newValue)
+        setResolvedTheme(
+          event.newValue === "system" ? getSystemTheme() : event.newValue
+        )
         return
       }
 
       setThemeState(defaultTheme)
+      setResolvedTheme(
+        defaultTheme === "system" ? getSystemTheme() : defaultTheme
+      )
     }
 
     window.addEventListener("storage", handleStorageChange)
@@ -207,9 +228,10 @@ export function ThemeProvider({
   const value = React.useMemo(
     () => ({
       theme,
+      resolvedTheme,
       setTheme,
     }),
-    [theme, setTheme]
+    [theme, resolvedTheme, setTheme]
   )
 
   return (

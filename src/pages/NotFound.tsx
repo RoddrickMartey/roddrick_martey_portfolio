@@ -6,6 +6,11 @@ function NotFound() {
   const navigate = useNavigate()
   return (
     <main className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background p-4 text-center">
+      <title>Page Not Found | Roddrick Martey Anum</title>
+      <meta
+        name="description"
+        content="The requested portfolio page could not be found."
+      />
       {/* Background Subtle Radial Glow */}
       <div
         aria-hidden="true"

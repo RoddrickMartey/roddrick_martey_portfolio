@@ -14,6 +14,7 @@ import type { Project } from "@/types/project"
 import { useAdminStore } from "@/store/adminStore"
 import { ImageOff, ExternalLink, Pencil } from "lucide-react"
 import { GithubLogoIcon } from "@phosphor-icons/react"
+import { optimizeImage } from "@/lib/optimizeImage"
 
 type Props = {
   project: Partial<Project>
@@ -27,8 +28,12 @@ function ProjectItem({ project }: Props) {
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         {project.imageUrl ? (
           <img
-            src={project.imageUrl}
-            alt={project.title}
+            src={optimizeImage(project.imageUrl, { width: 640 })}
+            alt={`${project.title} preview`}
+            width={640}
+            height={360}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           />
         ) : (

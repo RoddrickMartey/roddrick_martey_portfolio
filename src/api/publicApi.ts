@@ -1,6 +1,8 @@
 import { api } from "@/lib/axios"
 import type { Project, ProjectTechnology } from "@/types/project"
 
+const publicGetConfig = { timeout: 12000 }
+
 export type PublicHomeProfile = {
   fullName: string
   title: string
@@ -120,13 +122,14 @@ export type CreatePublicContactResponse = {
 
 export const publicApi = {
   getHome: async (): Promise<PublicHomeResponse> =>
-    (await api.get<PublicHomeResponse>("/public/home")).data,
+    (await api.get<PublicHomeResponse>("/public/home", publicGetConfig)).data,
   getProjects: async (): Promise<PublicProject[]> =>
-    (await api.get<PublicProject[]>("/public/projects")).data,
+    (await api.get<PublicProject[]>("/public/projects", publicGetConfig)).data,
   getAbout: async (): Promise<PublicAboutResponse> =>
-    (await api.get<PublicAboutResponse>("/public/about")).data,
+    (await api.get<PublicAboutResponse>("/public/about", publicGetConfig)).data,
   getContact: async (): Promise<PublicContactResponse> =>
-    (await api.get<PublicContactResponse>("/public/contact")).data,
+    (await api.get<PublicContactResponse>("/public/contact", publicGetConfig))
+      .data,
   submitContact: async (
     input: CreatePublicContactInput
   ): Promise<CreatePublicContactResponse> =>

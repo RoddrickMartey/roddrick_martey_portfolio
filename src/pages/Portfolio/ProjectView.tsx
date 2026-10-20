@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useProject } from "@/hooks/useProjects"
-import { ResourceError } from "@/components/resource-error"
-import { ResourceLoader } from "@/components/resource-loader"
-import { EmptyResource } from "@/components/empty-component"
+import { PublicEmpty } from "@/components/PublicEmpty"
+import { PublicError } from "@/components/PublicError"
+import { PublicLoader } from "@/components/PublicLoader"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,6 +20,7 @@ import {
   Pencil,
 } from "lucide-react"
 import { useAdminStore } from "@/store/adminStore"
+import { optimizeImage } from "@/lib/optimizeImage"
 
 function ProjectView() {
   const { slug } = useParams<{ slug: string }>()
@@ -39,7 +40,7 @@ function ProjectView() {
   // 1. Guard against missing URL param
   if (!slug) {
     return (
-      <ResourceError
+      <PublicError
         title="Invalid Route"
         description="No project identifier was provided in the URL."
       />
@@ -48,16 +49,16 @@ function ProjectView() {
 
   // 2. Initial Loading State
   if (isLoading && !project) {
-    return <ResourceLoader message="Fetching project details..." fullScreen />
+    return <PublicLoader message="Fetching project details..." />
   }
 
   // 3. Fetch Error State
   if (isError && !project) {
     console.error("Error fetching project:", error)
     return (
-      <ResourceError
-        title="Failed to load project"
-        description="An unexpected error occurred while fetching the project details. Please try again."
+      <PublicError
+        title="This project is taking a moment"
+        description="The project details could not be loaded just now. Please try again."
         onRetry={refetch}
         isRetrying={isRefetching}
       />
@@ -67,27 +68,36 @@ function ProjectView() {
   // 4. Missing Project State
   if (!project) {
     return (
-      <section className="flex min-h-[calc(100vh-4rem)] w-full items-center justify-center p-4">
-        <EmptyResource
-          title="Project Not Found"
-          description="The requested project could not be found or has been removed."
-          actionLabel="Back to Projects"
-          actionLink="/projects"
-        />
-      </section>
+      <PublicEmpty
+        title="Project not found"
+        description="This project may have moved or is no longer available."
+        action={{ label: "Back to projects", href: "/projects" }}
+      />
     )
   }
 
-  const formattedDate = new Date(project.createdAt).toLocaleDateString(
-    "en-US",
-    {
-      month: "short",
-      year: "numeric",
-    }
-  )
+  const formattedDate = project.createdAt
+    ? new Date(project.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      })
+    : null
 
   return (
     <section className="min-h-screen w-full">
+      <title>{project.title} | Roddrick Martey Anum</title>
+      <meta name="description" content={project.summary} />
+      <meta
+        property="og:title"
+        content={`${project.title} | Roddrick Martey Anum`}
+      />
+      <meta property="og:description" content={project.summary} />
+      {project.imageUrl && (
+        <meta
+          property="og:image"
+          content={optimizeImage(project.imageUrl, { width: 1200 })}
+        />
+      )}
       <article className="mx-auto min-h-screen w-full max-w-5xl space-y-8 p-4 sm:p-6">
         {/* Navigation & Action Bar */}
         <div className="flex animate-in flex-wrap items-center justify-between gap-4 duration-700 fade-in slide-in-from-left-8 motion-reduce:animate-none">
@@ -156,10 +166,12 @@ function ProjectView() {
             <Badge variant={project.published ? "secondary" : "destructive"}>
               {project.published ? "Published" : "Draft"}
             </Badge>
-            <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
-              <Calendar className="h-3.5 w-3.5" />
-              {formattedDate}
-            </span>
+            {formattedDate && (
+              <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5" />
+                {formattedDate}
+              </span>
+            )}
           </div>
 
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -174,8 +186,12 @@ function ProjectView() {
         {project.imageUrl && (
           <div className="animate-in overflow-hidden border bg-muted delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none">
             <img
-              src={project.imageUrl}
+              src={optimizeImage(project.imageUrl, { width: 1200 })}
               alt={`${project.title} preview`}
+              width={1200}
+              height={675}
+              loading="lazy"
+              decoding="async"
               className="max-h-120 w-full object-cover"
             />
           </div>

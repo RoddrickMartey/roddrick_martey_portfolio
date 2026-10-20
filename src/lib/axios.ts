@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios"
-import { useAdminStore } from "@/store/adminStore"
 
 interface ApiErrorResponse {
   error?: string
@@ -20,9 +19,11 @@ api.interceptors.response.use(
     if (error.response) {
       const { status, data } = error.response
       const errorCode = data?.code
+      const requestUrl = error.config?.url ?? ""
 
-      const isLoginRequest = error.config?.url?.endsWith("/auth/login")
-      console.log(error.config?.url, isLoginRequest)
+      const isPublicRequest = requestUrl.includes("/public/")
+      const isLoginRequest = requestUrl.endsWith("/auth/login")
+      const isAdminRequest = !isPublicRequest && !isLoginRequest
 
       const isSessionError =
         status === 401 &&
@@ -31,13 +32,8 @@ api.interceptors.response.use(
           errorCode === "TOKEN_EXPIRED" ||
           errorCode === "TOKEN_INVALID")
 
-      if (isSessionError) {
-        useAdminStore.getState().logout()
-        console.log("Reached this line")
-
-        if (window.location.pathname !== "/") {
-          window.location.href = "/"
-        }
+      if (isSessionError && isAdminRequest) {
+        window.dispatchEvent(new Event("admin:session-expired"))
       }
 
       return Promise.reject(error)

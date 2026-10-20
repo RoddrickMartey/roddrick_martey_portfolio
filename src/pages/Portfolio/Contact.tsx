@@ -1,8 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Mail, MapPin, Phone, Send } from "lucide-react"
 import { useForm } from "react-hook-form"
-import { ResourceError } from "@/components/resource-error"
-import { ResourceLoader } from "@/components/resource-loader"
+import { useState, type BaseSyntheticEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -15,6 +14,10 @@ import {
 } from "@/schema/publicContactSchema"
 import { usePublicContact, useSubmitPublicContact } from "@/hooks/usePublic"
 import { ArrowUpRight } from "lucide-react"
+import { optimizeImage } from "@/lib/optimizeImage"
+import { PublicEmpty } from "@/components/PublicEmpty"
+import { PublicError } from "@/components/PublicError"
+import { PublicLoader } from "@/components/PublicLoader"
 
 const emptyValues: PublicContactFormValues = {
   name: "",
@@ -28,19 +31,36 @@ function Contact() {
     data: contact,
     isLoading,
     isError,
-    error,
     refetch,
     isRefetching,
   } = usePublicContact()
   const { mutate: submitContact, isPending } = useSubmitPublicContact()
+  const [isSubmitLocked, setIsSubmitLocked] = useState(false)
   const form = useForm<PublicContactFormValues>({
     resolver: zodResolver(publicContactSchema),
     defaultValues: emptyValues,
   })
 
-  const onSubmit = (values: PublicContactFormValues) => {
+  const onSubmit = (
+    values: PublicContactFormValues,
+    event?: BaseSyntheticEvent
+  ) => {
+    const formElement = event?.currentTarget as HTMLFormElement | undefined
+    const honeypot = formElement?.elements.namedItem(
+      "website"
+    ) as HTMLInputElement | null
+
+    if (isSubmitLocked || honeypot?.value || isPending) {
+      if (honeypot?.value) {
+        form.reset(emptyValues)
+      }
+      return
+    }
+
+    setIsSubmitLocked(true)
     submitContact(values, {
       onSuccess: () => {
+        setIsSubmitLocked(false)
         form.reset(emptyValues)
         toast.add({
           type: "success",
@@ -49,6 +69,7 @@ function Contact() {
         })
       },
       onError: (submitError) => {
+        setIsSubmitLocked(false)
         toast.add({
           type: "error",
           title: "Could not send message",
@@ -59,27 +80,6 @@ function Contact() {
         })
       },
     })
-  }
-
-  if (isLoading && !contact) {
-    return <ResourceLoader message="Fetching contact details" fullScreen />
-  }
-
-  if (isError && !contact) {
-    return (
-      <section className="flex min-h-screen w-full items-center justify-center p-6">
-        <ResourceError
-          title="Failed to load contact details"
-          description={
-            error instanceof Error
-              ? error.message
-              : "Could not retrieve contact details right now."
-          }
-          onRetry={refetch}
-          isRetrying={isRefetching}
-        />
-      </section>
-    )
   }
 
   const contactItems = [
@@ -114,13 +114,17 @@ function Contact() {
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden px-6 py-28 sm:px-8 lg:px-12">
+      <title>Contact | Roddrick Martey Anum</title>
+      <meta
+        name="description"
+        content="Get in touch with Roddrick Martey Anum about a project, opportunity, or question."
+      />
       {/* Background Layer: Top section header overlay with light blur and gradient fade */}
       <div
         aria-hidden="true"
         className="mask-image-[linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none absolute inset-x-0 -top-5 -left-10 -z-10 h-full bg-cover bg-top bg-no-repeat opacity-40"
         style={{
-          backgroundImage:
-            "url('https://res.cloudinary.com/dtehqyxpu/image/upload/v1788824576/45045ecdd11da3a63c601c120a738a25_zm0yp6.png')",
+          backgroundImage: `url('${optimizeImage("https://res.cloudinary.com/dtehqyxpu/image/upload/v1788824576/45045ecdd11da3a63c601c120a738a25_zm0yp6.png", { width: 1920 })}')`,
         }}
       />
 
@@ -145,35 +149,59 @@ function Contact() {
                 Reach me
               </p>
               <div className="mt-5 space-y-5">
-                {contactItems.map((item) => {
-                  const Icon = item.icon
-                  const content = (
-                    <div className="flex items-start gap-4">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-secondary text-primary transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground motion-reduce:transition-none">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <div className="min-w-0 pt-0.5">
-                        <p className="text-xs text-muted-foreground">
-                          {item.label}
-                        </p>
-                        <p className="mt-0.5 text-sm font-medium wrap-break-word">
-                          {item.value}
-                        </p>
+                {isLoading && !contact ? (
+                  <PublicLoader
+                    message="Loading contact details..."
+                    fullScreen={false}
+                    className="min-h-0 px-0 py-0"
+                  />
+                ) : isError && !contact ? (
+                  <PublicError
+                    title="Contact details are taking a moment"
+                    description="Contact details could not be loaded just now. Please try again."
+                    onRetry={() => void refetch()}
+                    isRetrying={isRefetching}
+                    fullScreen={false}
+                    className="min-h-0 px-0 py-0"
+                  />
+                ) : contactItems.length > 0 ? (
+                  contactItems.map((item) => {
+                    const Icon = item.icon
+                    const content = (
+                      <div className="flex items-start gap-4">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-secondary text-primary transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground motion-reduce:transition-none">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <div className="min-w-0 pt-0.5">
+                          <p className="text-xs text-muted-foreground">
+                            {item.label}
+                          </p>
+                          <p className="mt-0.5 text-sm font-medium wrap-break-word">
+                            {item.value}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )
-                  return item.href ? (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      className="group block rounded-md hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
-                    >
-                      {content}
-                    </a>
-                  ) : (
-                    <div key={item.label}>{content}</div>
-                  )
-                })}
+                    )
+                    return item.href ? (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        className="group block rounded-md hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <div key={item.label}>{content}</div>
+                    )
+                  })
+                ) : (
+                  <PublicEmpty
+                    title="No contact details listed"
+                    description="Contact information is not available here yet."
+                    fullScreen={false}
+                    className="min-h-0 px-0 py-0"
+                  />
+                )}
               </div>
             </div>
 
@@ -204,6 +232,14 @@ function Contact() {
             className="animate-in space-y-6 border border-border bg-card/90 p-6 backdrop-blur-xs delay-150 duration-700 fade-in slide-in-from-right-8 motion-reduce:animate-none sm:p-8"
             noValidate
           >
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              aria-hidden="true"
+              autoComplete="off"
+              className="absolute -left-[9999px] h-px w-px overflow-hidden"
+            />
             <div className="grid gap-6 sm:grid-cols-2">
               <Field>
                 <FieldLabel htmlFor="contact-name">Name</FieldLabel>

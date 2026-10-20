@@ -12,7 +12,7 @@ export const projectApi = {
     (await api.get<Project[]>("/projects/admin", { params: { featured } }))
       .data,
   getBySlug: async (slug: string): Promise<Project> =>
-    (await api.get<Project>(`/projects/${slug}`)).data,
+    (await api.get<Project>(`/projects/${slug}`, { timeout: 12000 })).data,
   getAdminBySlug: async (slug: string): Promise<Project> =>
     (await api.get<Project>(`/projects/admin/${slug}`)).data,
   create: async (input: CreateProjectInput): Promise<Project> =>

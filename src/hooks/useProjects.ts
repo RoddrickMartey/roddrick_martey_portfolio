@@ -1,16 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { projectApi } from "@/api/projectApi"
 import type { CreateProjectInput, ProjectInput } from "@/types/project"
+import type { PublicProject } from "@/api/publicApi"
+import {
+  PUBLIC_PROJECTS_QUERY_KEY,
+  publicQueryOptions,
+} from "@/hooks/usePublic"
 
 const PROJECTS_QUERY_KEY = ["projects"]
 const PROJECT_QUERY_KEY = (slug: string) => ["projects", slug]
-
-const publicProjectOptions = {
-  staleTime: 5 * 60 * 1000,
-  gcTime: 30 * 60 * 1000,
-  retry: 2,
-  refetchOnWindowFocus: false,
-}
 
 export function useProjects(featured?: boolean) {
   return useQuery({
@@ -27,11 +25,35 @@ export function useAdminProjects(featured?: boolean) {
 }
 
 export function useProject(slug: string) {
+  const queryClient = useQueryClient()
+
   return useQuery({
-    ...publicProjectOptions,
+    ...publicQueryOptions,
     queryKey: PROJECT_QUERY_KEY(slug),
     queryFn: () => projectApi.getBySlug(slug),
     enabled: !!slug,
+    placeholderData: () => {
+      const project = queryClient
+        .getQueryData<PublicProject[]>(PUBLIC_PROJECTS_QUERY_KEY)
+        ?.find((item) => item.slug === slug)
+
+      if (!project) {
+        return undefined
+      }
+
+      return {
+        ...project,
+        problem: null,
+        approach: null,
+        challenge: null,
+        outcome: null,
+        imagePublicId: null,
+        adminId: "",
+        order: 0,
+        createdAt: "",
+        updatedAt: "",
+      }
+    },
   })
 }
 

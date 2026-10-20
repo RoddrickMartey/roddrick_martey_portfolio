@@ -1,8 +1,8 @@
 import type { PublicSkill } from "@/api/publicApi"
 import { Code2, Sparkles } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
-import { EmptyResource } from "@/components/empty-component"
-import { ResourceError } from "@/components/resource-error"
+import { PublicEmpty } from "@/components/PublicEmpty"
+import { PublicError } from "@/components/PublicError"
+import { PublicLoader } from "@/components/PublicLoader"
 
 type SkillsPublicSectionProps = {
   skillCategories: PublicSkill[]
@@ -23,10 +23,11 @@ function SkillsPublicSection({
     return (
       <section className="w-full border-t border-border px-6 py-24 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <ResourceError
-            title="Failed to load skills"
-            description="Could not retrieve the skill highlights right now."
+          <PublicError
+            title="The toolkit is taking a moment"
+            description="Skill highlights could not be loaded just now."
             onRetry={refetch}
+            fullScreen={false}
           />
         </div>
       </section>
@@ -46,19 +47,13 @@ function SkillsPublicSection({
         </div>
 
         {shouldShowLoading ? (
-          <div className="grid animate-in gap-px overflow-hidden border border-border bg-border delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none sm:grid-cols-2 lg:grid-cols-3">
-            {[0, 1, 2, 3, 4, 5].map((item) => (
-              <div key={item} className="space-y-3 bg-card p-5">
-                <Skeleton className="h-5 w-2/3" />
-                <Skeleton className="h-3 w-1/3" />
-              </div>
-            ))}
-          </div>
+          <PublicLoader message="Gathering the toolkit..." fullScreen={false} />
         ) : skillCategories.length === 0 ? (
-          <EmptyResource
-            title="No skill highlights yet"
-            description="A concise selection of skills will appear here."
+          <PublicEmpty
+            title="Toolkit in progress"
+            description="A selection of skills will appear here soon."
             icon={<Sparkles className="h-6 w-6" />}
+            fullScreen={false}
           />
         ) : (
           <div className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">

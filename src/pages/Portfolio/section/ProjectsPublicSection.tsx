@@ -1,9 +1,9 @@
 import type { PublicHomeProject } from "@/api/publicApi"
 import { Link } from "react-router-dom"
 import { ArrowUpRight, FolderOpen } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
-import { EmptyResource } from "@/components/empty-component"
-import { ResourceError } from "@/components/resource-error"
+import { PublicEmpty } from "@/components/PublicEmpty"
+import { PublicError } from "@/components/PublicError"
+import { PublicLoader } from "@/components/PublicLoader"
 import ProjectItem from "@/components/project-item"
 
 type ProjectsPublicSectionProps = {
@@ -26,10 +26,11 @@ function ProjectsPublicSection({
     return (
       <section className="w-full border-t border-border px-6 py-24 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <ResourceError
-            title="Failed to load projects"
-            description="Could not retrieve featured projects right now."
+          <PublicError
+            title="Projects are taking a moment"
+            description="The selected work could not be loaded just now."
             onRetry={refetch}
+            fullScreen={false}
           />
         </div>
       </section>
@@ -58,21 +59,16 @@ function ProjectsPublicSection({
         </div>
 
         {shouldShowLoading ? (
-          <div className="grid animate-in gap-6 delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none md:grid-cols-2 lg:grid-cols-3">
-            {[0, 1, 2].map((item) => (
-              <div key={item} className="space-y-4 border border-border p-4">
-                <Skeleton className="aspect-16/10 w-full" />
-                <Skeleton className="h-6 w-2/3" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-              </div>
-            ))}
-          </div>
+          <PublicLoader
+            message="Gathering selected work..."
+            fullScreen={false}
+          />
         ) : projects.length === 0 ? (
-          <EmptyResource
-            title="No featured projects yet"
-            description="Featured work will appear here as it is published."
+          <PublicEmpty
+            title="New work is on the way"
+            description="Featured projects will appear here as they are published."
             icon={<FolderOpen className="h-6 w-6" />}
+            fullScreen={false}
           />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
