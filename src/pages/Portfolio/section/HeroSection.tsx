@@ -18,10 +18,10 @@ type HeroSectionProps = {
 const PORTRAIT_WIDTH = "w-64 sm:w-72 lg:w-full lg:max-w-80 xl:max-w-96"
 
 const socialButtonClasses =
-  "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/80 bg-background/80 text-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-foreground/20 hover:bg-foreground hover:text-background hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:translate-y-0 motion-reduce:transition-none sm:h-11 sm:w-11"
+  "inline-flex h-10 w-10 items-center justify-center border border-border/80 bg-background/80 text-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-foreground/20 hover:bg-foreground hover:text-background hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:translate-y-0 motion-reduce:transition-none sm:h-11 sm:w-11"
 
 const socialPillClasses =
-  "inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/80 bg-background/80 px-4 text-sm font-medium text-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-foreground/20 hover:bg-foreground hover:text-background hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:translate-y-0 motion-reduce:transition-none sm:h-11 sm:px-5"
+  "inline-flex h-10 items-center justify-center gap-2 border border-border/80 bg-background/80 px-4 text-sm font-medium text-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-foreground/20 hover:bg-foreground hover:text-background hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:translate-y-0 motion-reduce:transition-none sm:h-11 sm:px-5"
 
 function HeroSection({ data, isLoading, error, refetch }: HeroSectionProps) {
   const navigate = useNavigate()
@@ -59,6 +59,8 @@ function HeroSection({ data, isLoading, error, refetch }: HeroSectionProps) {
     { href: data?.githubUrl, label: "GitHub", Icon: GithubLogoIcon },
     { href: data?.linkedinUrl, label: "LinkedIn", Icon: LinkedinLogoIcon },
   ].filter((s) => Boolean(s.href))
+
+  const whoIsName = data?.fullName.split(" ")[0] || "Rod"
 
   return (
     <section
@@ -141,7 +143,7 @@ function HeroSection({ data, isLoading, error, refetch }: HeroSectionProps) {
                       title="Who's Rod"
                       className={socialPillClasses}
                     >
-                      <span>Who&apos;s Rod</span>
+                      <span>Who&apos;s {whoIsName}</span>
                       <User className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                   )}

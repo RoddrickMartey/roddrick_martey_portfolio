@@ -52,7 +52,7 @@ function AvatarCropDialog({
             crop={crop}
             zoom={zoom}
             aspect={1}
-            cropShape="round"
+            cropShape="rect"
             showGrid={false}
             onCropChange={setCrop}
             onZoomChange={setZoom}
