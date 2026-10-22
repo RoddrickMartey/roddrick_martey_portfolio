@@ -239,7 +239,7 @@ function Contact() {
               tabIndex={-1}
               aria-hidden="true"
               autoComplete="off"
-              className="absolute -left-[9999px] h-px w-px overflow-hidden"
+              className="absolute left-[-9999px] h-px w-px overflow-hidden"
             />
             <div className="grid gap-6 sm:grid-cols-2">
               <Field>
