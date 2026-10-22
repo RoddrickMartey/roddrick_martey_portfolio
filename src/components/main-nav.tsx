@@ -4,6 +4,7 @@ import { Menu, X, Moon, Sun, ArrowUpRight, MapPin, Globe } from "lucide-react"
 import { GithubLogoIcon, LinkedinLogoIcon } from "@phosphor-icons/react"
 import { useTheme } from "@/components/theme-provider"
 import type { PublicHomeProfile } from "@/api/publicApi"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 
 type NavItem = {
   label: string
@@ -45,10 +46,22 @@ function MainNav({ profile }: MainNavProps) {
   const openToWork = profile?.openToWork ?? true
 
   const socials = [
-    { href: profile?.githubUrl, label: "GitHub", Icon: GithubLogoIcon },
-    { href: profile?.linkedinUrl, label: "LinkedIn", Icon: LinkedinLogoIcon },
-    { href: profile?.websiteUrl, label: "Website", Icon: Globe },
-  ].filter((s) => Boolean(s.href))
+    {
+      href: safeHttpUrl(profile?.githubUrl),
+      label: "GitHub",
+      Icon: GithubLogoIcon,
+    },
+    {
+      href: safeHttpUrl(profile?.linkedinUrl),
+      label: "LinkedIn",
+      Icon: LinkedinLogoIcon,
+    },
+    {
+      href: safeHttpUrl(profile?.websiteUrl),
+      label: "Website",
+      Icon: Globe,
+    },
+  ].filter((s): s is typeof s & { href: string } => Boolean(s.href))
 
   const showAside = Boolean(profile?.fullName)
 
@@ -297,7 +310,7 @@ function MainNav({ profile }: MainNavProps) {
                   {socials.map(({ href, label, Icon }) => (
                     <a
                       key={label}
-                      href={href as string}
+                      href={href}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={label}

@@ -7,12 +7,15 @@ const CLOUDINARY_HOST = "res.cloudinary.com"
 export function optimizeImage(url: string, options: ImageOptions = {}) {
   try {
     const imageUrl = new URL(url)
+    if (imageUrl.protocol !== "http:" && imageUrl.protocol !== "https:") {
+      return undefined
+    }
 
     if (
       imageUrl.hostname !== CLOUDINARY_HOST ||
       !imageUrl.pathname.includes("/image/upload/")
     ) {
-      return url
+      return imageUrl.href
     }
 
     const transformations = ["f_auto", "q_auto"]
@@ -27,6 +30,6 @@ export function optimizeImage(url: string, options: ImageOptions = {}) {
 
     return imageUrl.toString()
   } catch {
-    return url
+    return undefined
   }
 }

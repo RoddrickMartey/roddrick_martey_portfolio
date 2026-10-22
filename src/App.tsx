@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from "react"
 import { Outlet, Routes, Route } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
-import { useAdminStore } from "./store/adminStore"
+import { clearAdminSession } from "./lib/clearAdminSession"
 import { ResourceLoader } from "./components/resource-loader"
 import NotFound from "./pages/NotFound"
 import ProjectView from "./pages/Portfolio/ProjectView"
@@ -41,11 +41,9 @@ function AdminSuspenseBoundary() {
 
 export function App() {
   const navigate = useNavigate()
-  const logout = useAdminStore((state) => state.logout)
-
   useEffect(() => {
     const handleSessionExpired = () => {
-      logout()
+      clearAdminSession()
       if (window.location.pathname.startsWith("/007/admin")) {
         navigate("/007/admin/login", { replace: true })
       }
@@ -54,7 +52,7 @@ export function App() {
     window.addEventListener("admin:session-expired", handleSessionExpired)
     return () =>
       window.removeEventListener("admin:session-expired", handleSessionExpired)
-  }, [logout, navigate])
+  }, [navigate])
 
   return (
     <Routes>

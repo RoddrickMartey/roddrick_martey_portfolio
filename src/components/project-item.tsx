@@ -15,6 +15,7 @@ import { useAdminStore } from "@/store/adminStore"
 import { ImageOff, ExternalLink, Pencil } from "lucide-react"
 import { GithubLogoIcon } from "@phosphor-icons/react"
 import { optimizeImage } from "@/lib/optimizeImage"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 
 type Props = {
   project: Partial<Project>
@@ -23,12 +24,16 @@ type Props = {
 function ProjectItem({ project }: Props) {
   const { isLoggedIn } = useAdminStore()
   const navigate = useNavigate()
+  const liveUrl = safeHttpUrl(project.liveUrl)
+  const githubUrl = safeHttpUrl(project.githubUrl)
+  const imageUrl = safeHttpUrl(project.imageUrl)
+
   return (
     <Card className="mx-auto flex w-full max-w-sm flex-col overflow-hidden pt-0">
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
-        {project.imageUrl ? (
+        {imageUrl ? (
           <img
-            src={optimizeImage(project.imageUrl, { width: 640 })}
+            src={optimizeImage(imageUrl, { width: 640 })}
             alt={`${project.title} preview`}
             width={640}
             height={360}
@@ -81,10 +86,10 @@ function ProjectItem({ project }: Props) {
           >
             View Project
           </Button>
-          {project.liveUrl && (
+          {liveUrl && (
             <Button variant="outline" size="icon">
               <a
-                href={project.liveUrl}
+                href={liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Open live site"
@@ -93,10 +98,10 @@ function ProjectItem({ project }: Props) {
               </a>
             </Button>
           )}
-          {project.githubUrl && (
+          {githubUrl && (
             <Button variant="outline" size="icon">
               <a
-                href={project.githubUrl}
+                href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Open GitHub repo"

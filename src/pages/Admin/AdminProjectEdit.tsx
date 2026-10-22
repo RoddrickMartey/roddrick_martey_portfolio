@@ -42,6 +42,7 @@ import {
 import { GithubLogoIcon } from "@phosphor-icons/react"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 
 function AdminProjectEdit() {
   const navigate = useNavigate()
@@ -58,7 +59,8 @@ function AdminProjectEdit() {
   >(null)
   const [imageError, setImageError] = useState<string | null>(null)
 
-  const imagePreview = uploadedImagePreview ?? project?.imageUrl ?? null
+  const imagePreview =
+    uploadedImagePreview ?? safeHttpUrl(project?.imageUrl) ?? null
 
   const {
     register,

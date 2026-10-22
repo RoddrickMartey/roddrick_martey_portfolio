@@ -18,6 +18,7 @@ import { usePublicAbout } from "@/hooks/usePublic"
 
 import { SkillBadges } from "@/components/SkillBadges"
 import { optimizeImage } from "@/lib/optimizeImage"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 
 const formatMonthYear = (date: string) => format(new Date(date), "MMM yyyy")
 
@@ -77,9 +78,9 @@ function About() {
   ]
 
   const socialLinks = [
-    { label: "LinkedIn", href: data.profile.linkedinUrl },
-    { label: "GitHub", href: data.profile.githubUrl },
-    { label: "Website", href: data.profile.websiteUrl },
+    { label: "LinkedIn", href: safeHttpUrl(data.profile.linkedinUrl) },
+    { label: "GitHub", href: safeHttpUrl(data.profile.githubUrl) },
+    { label: "Website", href: safeHttpUrl(data.profile.websiteUrl) },
   ].filter((item): item is { label: string; href: string } =>
     Boolean(item.href)
   )
@@ -291,12 +292,12 @@ function About() {
                     {format(new Date(item.dateEarned), "MMM d, yyyy")}
                   </p>
                 )}
-                {item.verifyUrl && (
+                {safeHttpUrl(item.verifyUrl) && (
                   <a
                     className="mt-4 inline-flex items-center text-sm font-medium text-primary hover:underline"
-                    href={item.verifyUrl}
+                    href={safeHttpUrl(item.verifyUrl)}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                   >
                     Verify credential <ArrowUpRight className="ml-1 h-4 w-4" />
                   </a>
@@ -313,7 +314,7 @@ function About() {
                 key={item.label}
                 href={item.href}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="inline-flex items-center text-sm font-medium text-primary hover:underline"
               >
                 {item.label} <ArrowUpRight className="ml-1 h-4 w-4" />

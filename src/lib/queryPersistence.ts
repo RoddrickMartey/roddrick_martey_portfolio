@@ -5,6 +5,7 @@ import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persist
 const PUBLIC_QUERY_PREFIX = "public"
 const PUBLIC_CACHE_BUSTER = "public-cache-v1"
 const PUBLIC_CACHE_MAX_AGE = 24 * 60 * 60 * 1000
+const PUBLIC_CACHE_KEY = "portfolio-public-query-cache"
 
 function isPublicQuery(query: { queryKey: readonly unknown[] }) {
   return query.queryKey[0] === PUBLIC_QUERY_PREFIX
@@ -13,7 +14,7 @@ function isPublicQuery(query: { queryKey: readonly unknown[] }) {
 export function persistPublicQueryCache(queryClient: QueryClient) {
   const persister = createSyncStoragePersister({
     storage: window.localStorage,
-    key: "portfolio-public-query-cache",
+    key: PUBLIC_CACHE_KEY,
   })
 
   return persistQueryClient({
@@ -25,4 +26,8 @@ export function persistPublicQueryCache(queryClient: QueryClient) {
       shouldDehydrateQuery: isPublicQuery,
     },
   })
+}
+
+export function clearPersistedPublicQueryCache() {
+  window.localStorage.removeItem(PUBLIC_CACHE_KEY)
 }

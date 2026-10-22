@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { useAdminStore } from "@/store/adminStore"
 import { optimizeImage } from "@/lib/optimizeImage"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 
 function ProjectView() {
   const { slug } = useParams<{ slug: string }>()
@@ -36,6 +37,9 @@ function ProjectView() {
     refetch,
     isRefetching,
   } = useProject(slug ?? "")
+  const liveUrl = safeHttpUrl(project?.liveUrl)
+  const githubUrl = safeHttpUrl(project?.githubUrl)
+  const imageUrl = safeHttpUrl(project?.imageUrl)
 
   // 1. Guard against missing URL param
   if (!slug) {
@@ -92,10 +96,10 @@ function ProjectView() {
         content={`${project.title} | Roddrick Martey Anum`}
       />
       <meta property="og:description" content={project.summary} />
-      {project.imageUrl && (
+      {imageUrl && (
         <meta
           property="og:image"
-          content={optimizeImage(project.imageUrl, { width: 1200 })}
+          content={optimizeImage(imageUrl, { width: 1200 })}
         />
       )}
       <article className="mx-auto min-h-screen w-full max-w-5xl space-y-8 p-4 sm:p-6">
@@ -112,12 +116,12 @@ function ProjectView() {
           </Button>
 
           <div className="flex w-full flex-wrap justify-end gap-2 sm:w-auto">
-            {project.liveUrl && (
+            {liveUrl && (
               <Button
                 size="sm"
                 variant="default"
                 onClick={() =>
-                  window.open(project.liveUrl!, "_blank", "noopener,noreferrer")
+                  window.open(liveUrl, "_blank", "noopener,noreferrer")
                 }
                 className="flex items-center gap-2"
               >
@@ -126,13 +130,13 @@ function ProjectView() {
               </Button>
             )}
 
-            {project.githubUrl && (
+            {githubUrl && (
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() =>
                   window.open(
-                    project.githubUrl!,
+                    githubUrl,
                     "_blank",
                     "noopener,noreferrer"
                   )
@@ -183,10 +187,10 @@ function ProjectView() {
         </div>
 
         {/* Cover Image */}
-        {project.imageUrl && (
+        {imageUrl && (
           <div className="animate-in overflow-hidden border bg-muted delay-150 duration-700 fade-in slide-in-from-bottom-6 motion-reduce:animate-none">
             <img
-              src={optimizeImage(project.imageUrl, { width: 1200 })}
+              src={optimizeImage(imageUrl, { width: 1200 })}
               alt={`${project.title} preview`}
               width={1200}
               height={675}

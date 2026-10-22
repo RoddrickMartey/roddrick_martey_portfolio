@@ -15,6 +15,7 @@ import {
 import { usePublicContact, useSubmitPublicContact } from "@/hooks/usePublic"
 import { ArrowUpRight } from "lucide-react"
 import { optimizeImage } from "@/lib/optimizeImage"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 import { PublicEmpty } from "@/components/PublicEmpty"
 import { PublicError } from "@/components/PublicError"
 import { PublicLoader } from "@/components/PublicLoader"
@@ -106,8 +107,8 @@ function Contact() {
   )
 
   const socialItems = [
-    { label: "LinkedIn", href: contact?.linkedinUrl },
-    { label: "GitHub", href: contact?.githubUrl },
+    { label: "LinkedIn", href: safeHttpUrl(contact?.linkedinUrl) },
+    { label: "GitHub", href: safeHttpUrl(contact?.githubUrl) },
   ].filter((item): item is { label: string; href: string } =>
     Boolean(item.href)
   )
@@ -216,7 +217,7 @@ function Contact() {
                       key={item.label}
                       href={item.href}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="flex items-center text-sm font-medium text-secondary-foreground hover:text-primary hover:underline"
                     >
                       {item.label} <ArrowUpRight size={16} />

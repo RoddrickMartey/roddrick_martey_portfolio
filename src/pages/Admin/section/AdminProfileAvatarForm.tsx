@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useUpdateProfileAvatar } from "@/hooks/useProfile"
 import type { Profile } from "@/types/profile"
 import { validateFile } from "@/lib/validateFile"
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import { FieldError } from "@/components/ui/field"
 import { Upload, Loader2 } from "lucide-react"
 import { useAdminStore } from "@/store/adminStore"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 
 function AdminProfileAvatarForm({
   avatarUrl,
@@ -28,6 +29,11 @@ function AdminProfileAvatarForm({
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { updateAdmin } = useAdminStore()
+
+  useEffect(() => {
+    if (!rawImageSrc) return
+    return () => URL.revokeObjectURL(rawImageSrc)
+  }, [rawImageSrc])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -66,7 +72,6 @@ function AdminProfileAvatarForm({
   }
 
   const handleCloseDialog = () => {
-    if (rawImageSrc) URL.revokeObjectURL(rawImageSrc)
     setRawImageSrc(null)
   }
 
@@ -81,7 +86,7 @@ function AdminProfileAvatarForm({
         </CardHeader>
         <CardContent className="flex items-center gap-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={avatarUrl ?? undefined} alt={fullName} />
+            <AvatarImage src={safeHttpUrl(avatarUrl)} alt={fullName} />
             <AvatarFallback className="text-lg">
               {fullName?.charAt(0) ?? "A"}
             </AvatarFallback>

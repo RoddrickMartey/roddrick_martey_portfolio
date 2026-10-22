@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/input-group"
 import { Key, LogIn, Loader2, Eye, EyeClosed } from "lucide-react"
 import authApi from "@/api/authApi"
-import { isAxiosError } from "axios"
 import { useState } from "react"
 import { useAdminStore } from "@/store/adminStore"
 import { useNavigate } from "react-router-dom"
@@ -41,8 +40,6 @@ function AdminLogin() {
     return format(new Date(date), "MMMM d, yyyy 'at' h:mm a")
   }
   const onSubmit = async (data: AdminLoginInput) => {
-    // Log the form values
-    console.log("Form Submitted:", data)
     try {
       const res = await authApi.login(data.email, data.password)
       toast.add({
@@ -52,17 +49,12 @@ function AdminLogin() {
       })
       setAdmin(res)
       navigate("/007/admin/dashboard") // Redirect to the admin home page after successful login
-    } catch (error) {
-      if (isAxiosError(error)) {
-        toast.add({
-          type: "error",
-          title: "Login Failed",
-          description:
-            error.response?.data?.message || "An error occurred during login.",
-        })
-        console.error("Login failed:", error.response?.data)
-      }
-      console.error("Login failed:", error)
+    } catch {
+      toast.add({
+        type: "error",
+        title: "Login Failed",
+        description: "Unable to sign in. Check your credentials and try again.",
+      })
     }
   }
 

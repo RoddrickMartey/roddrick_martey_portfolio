@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom"
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import {
   LayoutDashboard,
   User,
@@ -43,14 +43,35 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAdminStore } from "@/store/adminStore"
+import authApi from "@/api/authApi"
+import { clearAdminSession } from "@/lib/clearAdminSession"
+import { toast } from "@/components/ui/toast"
+import { safeHttpUrl } from "@/lib/safeHttpUrl"
 
 const BASE = "/007/admin"
 
 export function AdminSidebar() {
-  const { admin, logout } = useAdminStore()
+  const { admin } = useAdminStore()
   const { pathname } = useLocation()
+  const navigate = useNavigate()
 
   const isPathActive = (path: string) => pathname === path
+  const handleLogout = async () => {
+    try {
+      await authApi.logout()
+      toast.add({ type: "info", title: "Logged out" })
+    } catch {
+      toast.add({
+        type: "error",
+        title: "Logout could not be confirmed",
+        description:
+          "You have been signed out locally, but the server session may still be active.",
+      })
+    } finally {
+      clearAdminSession()
+      navigate("/007/admin/login", { replace: true })
+    }
+  }
 
   return (
     <Sidebar collapsible="icon">
@@ -239,7 +260,7 @@ export function AdminSidebar() {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={admin?.avatar ?? undefined}
+                    src={safeHttpUrl(admin?.avatar)}
                     alt={admin?.fullName || "Admin"}
                   />
                   <AvatarFallback className="rounded-lg">
@@ -257,7 +278,7 @@ export function AdminSidebar() {
                 <ChevronsUpDown className="ml-auto h-4 w-4 text-muted-foreground" />
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" align="start" className="w-56">
-                <DropdownMenuItem onClick={logout} variant="destructive">
+                <DropdownMenuItem onClick={handleLogout} variant="destructive">
                   <LogOut className="h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
